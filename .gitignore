@@ -164,3 +164,4 @@ Scripts/*
 share/*
 etc/*
 pyvenv.cfg
+.idea/
