@@ -165,3 +165,6 @@ share/*
 etc/*
 pyvenv.cfg
 .idea/
+.DS_Store
+etc/
+share/
