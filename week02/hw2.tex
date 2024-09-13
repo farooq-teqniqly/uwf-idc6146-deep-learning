@@ -1,0 +1,46 @@
+\documentclass{article}
+\begin{document}
+Given: \\
+\hat{y}=O=R_4(P_4) \\
+P_4=H_3w_4 \\
+H_3=R_3(P_3) \\
+P_3=H_2w_3 \\
+H_2=R_2(P_2) \\
+P_2=H_1w_2 \\
+H_1=R_1(P_1) \\
+P_1=xw_1 \\
+C=\frac{1}{2}(\hat{y}-y)^2 \\
+
+\section{Find $\frac{d}{dw_4}[C]$:}
+=(\hat{y}-y)\frac{d}{dw_4}\hat{y} \\
+=(\hat{y}-y)\frac{d}{dw_4}[R_4(P_4)] \\
+=(\hat{y}-y)R_4\acute(P_4)\frac{d}{dw_4}[H_3w_4] \\
+=(\hat{y}-y)R_4\acute(P_4)H_3
+
+\section{Find $\frac{d}{dw_3}[C]$:}
+=(\hat{y}-y)R_4\acute(P_4)\frac{d}{dw_3}[H_3w_4] \\
+=(\hat{y}-y)R_4\acute(P_4)w_4\frac{d}{dw_3}[H_3] \\
+=(\hat{y}-y)R_4\acute(P_4)w_4\frac{d}{dw_3}[R_3(P_3)]
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)\frac{d}{dw_3}[P_3] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)\frac{d}{dw_3}[H_2w_3] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)H_2
+
+\section{Find $\frac{d}{dw_1}[C]$:}
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)\frac{d}{dw_3}[H_2w_3] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)w_3\frac{d}{dw_1}[H_2] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)w_3\frac{d}{dw_1}[R_2(P_2)] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)w_3R_2\acute{}(P_2)\frac{d}{dw_1}[P_2] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)w_3R_2\acute{}(P_2)\frac{d}{dw_1}[H_1w_2] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)w_3R_2\acute{}(P_2)w_2\frac{d}{dw_1}[R_1(P_1)] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)w_3R_2\acute{}(P_2)w_2R_1\acute{}(P_1)\frac{d}{dw_1}[P_1] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)w_3R_2\acute{}(P_2)w_2R_1\acute{}(P_1)\frac{d}{dw_1}[xw_1] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)w_3R_2\acute{}(P_2)w_2R_1\acute{}(P_1)x \\
+
+\section{Output layer error}
+\hat{y} - y
+
+\section{Find $\frac{d}{dP_2}[C]$:}
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)w_3\frac{d}{dP_2}[R_2(P_2)] \\
+=(\hat{y}-y)R_4\acute{}(P_4)w_4R_3\acute{}(P_3)w_3R_2\acute{}(P_2)
+\end{document}
+
