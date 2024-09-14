@@ -168,3 +168,4 @@ pyvenv.cfg
 .DS_Store
 etc/
 share/
+.vs/
