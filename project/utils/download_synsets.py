@@ -63,19 +63,23 @@ synset_mapping = {
 
 async def download_and_rename_tar(session, synset_id, cifar_class_name, download_dir):
     """
-    Asynchronously downloads a .tar file from a given URL, renames the file, and saves it to a specified directory.
+    Asynchronously downloads a .tar file from a given URL, renames the file,
+    and saves it to a specified directory.
 
     Parameters:
     session (aiohttp.ClientSession): The aiohttp session used for making HTTP requests.
     synset_id (str): The synset ID used to construct the download URL.
-    cifar_class_name (str): The name associated with the CIFAR class, used to rename the downloaded file.
+    cifar_class_name (str): The name associated with the CIFAR class, used to rename
+    the downloaded file.
     download_dir (str): The directory where the downloaded file will be saved.
 
     Behavior:
     - Constructs the download URL using the provided synset_id.
-    - Constructs the renamed filename using synset_id and cifar_class_name, then checks if the file already exists in download_dir.
+    - Constructs the renamed filename using synset_id and cifar_class_name,
+    then checks if the file already exists in download_dir.
     - If the renamed file exists, logs a message and returns without downloading.
-    - If the renamed file does not exist, makes an async HTTP GET request to download the tar file.
+    - If the renamed file does not exist, makes an async HTTP GET request
+    to download the tar file.
     - Saves the downloaded file to download_dir with a temporary filename.
     - Renames the file to the constructed renamed filename.
     - Logs progress and any errors encountered during the download and renaming process.
@@ -117,9 +121,12 @@ async def main(download_dir: str):
         Args:
             download_dir (str): Directory to download the tar files.
 
-        This function checks if the specified download directory exists; if not, it creates the directory.
-        It then initializes an asynchronous HTTP session and creates a list of download tasks
-        for each CIFAR class and synset ID as specified in the synset_mapping dictionary.
+        This function checks if the specified download directory exists; if not,
+        it creates the directory.
+        It then initializes an asynchronous HTTP session and creates a list of
+        download tasks
+        for each CIFAR class and synset ID as specified in the synset_mapping
+        dictionary.
         Finally, it concurrently executes these download tasks using asyncio.gather.
     """
     if not os.path.exists(download_dir):
