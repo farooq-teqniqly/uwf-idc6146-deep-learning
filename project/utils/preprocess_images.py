@@ -76,7 +76,7 @@ def process_images(input_dir, output_dir, size, max_workers):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Resize images in a folder recursively to 244x244.')
+        description='Resize images in a folder recursively.')
     parser.add_argument('--input-dir', type=str, required=True,
                         help='Path to the input folder containing images')
     parser.add_argument('--output-dir', type=str, required=True,
