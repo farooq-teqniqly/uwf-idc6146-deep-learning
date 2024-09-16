@@ -23,29 +23,43 @@ from PIL import Image
 
 def setup_logging():
     """
-    Configures and sets up logging for the image resizer.
 
-    This function creates a FileHandler for logging to a file named
-    'image_resizer.log'. It then creates a Formatter to format the log
-    messages with the time, logger name, log level, and message. This
-    formatter is set for the handler, which is then added to the logger.
+        Configures and sets up logging for the image resizer application.
 
-    Returns:
-        logging.FileHandler: The file handler configured for logging.
+        The configuration includes:
+        - Creating a logger named 'image_resizer' with a logging level of INFO.
+        - Creating a console handler for outputting logs to the console.
+        - Creating a file handler for writing logs to a file named 'image_resize.log'.
+        - Setting a log message format that includes the timestamp, logger name, log
+        level, and the actual message.
+        - Adding both the console handler and file handler to the logger if they haven't
+        been added already.
+
+        Returns:
+            console_handler: The configured console handler.
+            file_handler: The configured file handler.
+            logger: The logger configured for the image resizer application.
+
     """
     logger = logging.getLogger("image_resizer")
-    handler = logging.StreamHandler()
-    formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
-    handler.setFormatter(formatter)
     logger.setLevel(logging.INFO)
 
-    if logger.hasHandlers():
-        logger.handlers.clear()
+    # Create handlers
+    console_handler = logging.StreamHandler()
+    file_handler = logging.FileHandler("image_resize.log")
 
-    logger.addHandler(handler)
+    # Create formatters and add them to handlers
+    formatter = logging.Formatter(
+        "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+    console_handler.setFormatter(formatter)
+    file_handler.setFormatter(formatter)
 
-    return handler, logger
+    # Add handlers to the logger
+    if not logger.hasHandlers():
+        logger.addHandler(console_handler)
+        logger.addHandler(file_handler)
+
+    return console_handler, file_handler, logger
 
 def resize_image(image_path, output_path, size):
     """
@@ -102,21 +116,27 @@ def find_images(input_dir):
 
 def process_images(input_dir, output_dir, size, max_workers, logger):
     """
-    Processes and resizes images from the input directory
-    and saves them to the output directory.
+    Processes images in a given input directory by resizing them and saving them to an
+    output directory.
 
-    Arguments:
-    input_dir (str): The directory to search for images to process.
-    output_dir (str): The directory where the processed images will be saved.
-    size (tuple): The target size for the resized images, specified as
-    a (width, height) tuple.
-    max_workers (int): The maximum number of worker processes
-    to use for parallel processing.
+    Parameters:
+    input_dir (str): The directory containing the images to be processed.
+    output_dir (str): The directory where resized images will be saved.
+    size (tuple): The desired size (width, height) for resizing the images.
+    max_workers (int): The maximum number of worker threads to use for resizing images.
+    logger (logging.Logger): Logger instance for logging messages during the process.
 
-    Logs:
-    Warnings if no images are found in the input directory.
-    Information about the number of images found and their types.
-    Timing information for the resizing process.
+    Functionality:
+    1. Finds images in the specified input directory.
+    2. Logs a warning message if no images are found and exits the function.
+    3. Logs the number of images found and starts the resizing process.
+    4. Logs the count of images by their file extension/type.
+    5. Prepares a list of tasks for resizing images, each task including the image path
+    and the corresponding output path.
+    6. Uses a ProcessPoolExecutor to resize images concurrently, respecting the
+    max_workers limit.
+    7. Times the entire resizing process and logs the time taken to resize all the
+    images.
     """
     images, image_count_by_type = find_images(input_dir)
 
@@ -150,7 +170,7 @@ def process_images(input_dir, output_dir, size, max_workers, logger):
         f"Time taken to resize {len(images)} images: {elapsed_time:.2f} seconds.")
 
 def main():
-    handler, logger = setup_logging()
+    console_handler, file_handler, logger = setup_logging()
 
     try:
         parser = argparse.ArgumentParser(
@@ -182,8 +202,10 @@ def main():
     except Exception:
         logger.exception("An error occurred during the image resizing process.")
     finally:
-        logger.removeHandler(handler)
-        handler.close()
+        logger.removeHandler(console_handler)
+        logger.removeHandler(file_handler)
+        console_handler.close()
+        file_handler.close()
 
 if __name__ == "__main__":
     main()
