@@ -16,11 +16,14 @@ import pickle
 
 import tensorflow as tf
 
+
 def save_dataset(input_dir, output_file):
     """
     Saves a dataset into a file.
 
-    This function processes image data from the specified input directory, normalizes the images, and saves them along with their labels and filenames into a specified output file using pickle.
+    This function processes image data from the specified input directory, normalizes
+    the images, and saves them along with their labels and filenames into a
+    specified output file using pickle.
 
     Args:
         input_dir (str): The path to the directory containing the images.
