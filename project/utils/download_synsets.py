@@ -63,15 +63,22 @@ synset_mapping = {
 
 async def download_and_rename_tar(session, synset_id, cifar_class_name, download_dir):
     """
-    Download the tar file for a given synset and rename it with the CIFAR-10
-    class name.
-    @param session: An active aiohttp ClientSession used to make HTTP requests.
-    @param synset_id: The identifier of the synset used to create the download URL
-    and the initial tar file name.
-    @param cifar_class_name: The CIFAR class name used to rename the downloaded
-    tar file.
-    @param download_dir: The directory where the downloaded tar file will be stored.
-    @return: None
+    Asynchronously downloads a .tar file from a given URL, renames the file, and saves it to a specified directory.
+
+    Parameters:
+    session (aiohttp.ClientSession): The aiohttp session used for making HTTP requests.
+    synset_id (str): The synset ID used to construct the download URL.
+    cifar_class_name (str): The name associated with the CIFAR class, used to rename the downloaded file.
+    download_dir (str): The directory where the downloaded file will be saved.
+
+    Behavior:
+    - Constructs the download URL using the provided synset_id.
+    - Constructs the renamed filename using synset_id and cifar_class_name, then checks if the file already exists in download_dir.
+    - If the renamed file exists, logs a message and returns without downloading.
+    - If the renamed file does not exist, makes an async HTTP GET request to download the tar file.
+    - Saves the downloaded file to download_dir with a temporary filename.
+    - Renames the file to the constructed renamed filename.
+    - Logs progress and any errors encountered during the download and renaming process.
     """
     tar_url = f"{ROOT_URL}{synset_id}.tar"
     renamed_tar_filename = f"{synset_id}-{cifar_class_name}.tar"
@@ -105,8 +112,15 @@ async def download_and_rename_tar(session, synset_id, cifar_class_name, download
 
 async def main(download_dir: str):
     """
-    Main function to download all synsets asynchronously.
-     @return: None
+        Main function to download and rename CIFAR tar files.
+
+        Args:
+            download_dir (str): Directory to download the tar files.
+
+        This function checks if the specified download directory exists; if not, it creates the directory.
+        It then initializes an asynchronous HTTP session and creates a list of download tasks
+        for each CIFAR class and synset ID as specified in the synset_mapping dictionary.
+        Finally, it concurrently executes these download tasks using asyncio.gather.
     """
     if not os.path.exists(download_dir):
         os.makedirs(download_dir)
