@@ -17,7 +17,6 @@ logging.basicConfig(
 )
 
 
-# Function to resize an image
 def resize_image(image_path, output_path, size):
     try:
         with Image.open(image_path) as img:
