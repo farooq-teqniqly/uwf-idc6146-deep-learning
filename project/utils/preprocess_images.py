@@ -1,19 +1,19 @@
-import os
 import argparse
 import logging
 import time
-from PIL import Image
+from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
-from collections import defaultdict
+
+from PIL import Image
 
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(levelname)s - %(message)s",
     handlers=[
         logging.FileHandler("image_resizer.log"),
-        logging.StreamHandler()
-    ]
+        logging.StreamHandler(),
+    ],
 )
 
 
@@ -30,11 +30,11 @@ def resize_image(image_path, output_path, size):
 
 
 def find_images(input_dir):
-    image_extensions = ('.png', '.jpg', '.jpeg', '.bmp', '.tiff')
+    image_extensions = (".png", ".jpg", ".jpeg", ".bmp", ".tiff")
     image_count_by_type = defaultdict(int)
     image_paths = []
 
-    for file in Path(input_dir).rglob('*'):
+    for file in Path(input_dir).rglob("*"):
         if file.suffix.lower() in image_extensions:
             image_paths.append(file)
             image_count_by_type[file.suffix.lower()] += 1  # Count each image type
@@ -76,23 +76,25 @@ def process_images(input_dir, output_dir, size, max_workers):
 
 def main():
     parser = argparse.ArgumentParser(
-        description='Resize images in a folder recursively.')
-    parser.add_argument('--input-dir', type=str, required=True,
-                        help='Path to the input folder containing images')
-    parser.add_argument('--output-dir', type=str, required=True,
-                        help='Path to the output folder where resized images will be saved')
-    parser.add_argument('--size', type=int, nargs=2, default=(224, 224),
-                        help='Target size for the resized images (width height)')
-    parser.add_argument('--workers', type=int, default=4,
-                        help='Number of parallel workers to use for resizing')
+        description="Resize images in a folder recursively.")
+    parser.add_argument("--input-dir", type=str, required=True,
+                        help="Path to the input folder containing images")
+    parser.add_argument("--output-dir", type=str, required=True,
+                        help="Path to the output folder where resized images "
+                             "will be saved")
+    parser.add_argument("--size", type=int, nargs=2, default=(224, 224),
+                        help="Target size for the resized images (width height)")
+    parser.add_argument("--workers", type=int, default=4,
+                        help="Number of parallel workers to use for resizing")
 
     args = parser.parse_args()
 
     logging.info(
-        f"Starting image resizing with {args.workers} workers. Target size: {args.size[0]}x{args.size[1]}.")
+        f"Starting image resizing with {args.workers} workers. Target size: "
+        f"{args.size[0]}x{args.size[1]}.")
     process_images(args.input_dir, args.output_dir, tuple(args.size), args.workers)
     logging.info("Image resizing process completed.")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
