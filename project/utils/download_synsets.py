@@ -36,6 +36,7 @@ Dependencies:
 - logging: Python standard library module for logging messages
 - os: Python standard library module for operating system-related functionalities
 """
+import argparse
 import asyncio
 import logging
 import os
@@ -60,13 +61,7 @@ synset_mapping = {
     "truck": "n04467665",
 }
 
-download_dir = r"C:\Users\faroo\Downloads\imagenet_cifar10_tars"
-
-if not os.path.exists(download_dir):
-    os.makedirs(download_dir)
-
-
-async def download_and_rename_tar(session, synset_id, cifar_class_name):
+async def download_and_rename_tar(session, synset_id, cifar_class_name, download_dir):
     """
     Download the tar file for a given synset and rename it with the CIFAR-10
     class name.
@@ -75,6 +70,7 @@ async def download_and_rename_tar(session, synset_id, cifar_class_name):
     and the initial tar file name.
     @param cifar_class_name: The CIFAR class name used to rename the downloaded
     tar file.
+    @param download_dir: The directory where the downloaded tar file will be stored.
     @return: None
     """
     tar_url = f"{ROOT_URL}{synset_id}.tar"
@@ -107,15 +103,30 @@ async def download_and_rename_tar(session, synset_id, cifar_class_name):
         logging.error(f"An error occurred while downloading {tar_url}: {e}")
 
 
-async def main():
-    """Main function to download all synsets asynchronously."""
+async def main(download_dir: str):
+    """
+    Main function to download all synsets asynchronously.
+     @return: None
+    """
+    if not os.path.exists(download_dir):
+        os.makedirs(download_dir)
+
     async with aiohttp.ClientSession() as session:
         tasks = []
         for cifar_class, synset_id in synset_mapping.items():
-            tasks.append(download_and_rename_tar(session, synset_id, cifar_class))
+            tasks.append(download_and_rename_tar(
+                session, synset_id, cifar_class, download_dir))
 
         await asyncio.gather(*tasks)
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    parser = argparse.ArgumentParser(
+        description="Download ImageNet synsets and rename them with CIFAR-10 "
+                    "class names.")
+
+    parser.add_argument("--download-dir", type=str, required=True,
+                        help="Directory where tar files will be downloaded.")
+
+    args = parser.parse_args()
+    asyncio.run(main(args.download_dir))
