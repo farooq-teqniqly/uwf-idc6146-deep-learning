@@ -9,7 +9,6 @@ from project.utils import preprocess_images
 
 
 class TestPreprocessImages(unittest.TestCase):
-
     def create_dummy_image(self, path, size):
         with Image.new("RGB", size) as img:
             img.save(path)
