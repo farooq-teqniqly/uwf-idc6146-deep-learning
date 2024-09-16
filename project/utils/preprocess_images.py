@@ -20,8 +20,6 @@ from pathlib import Path
 
 from PIL import Image
 
-logger = logging.getLogger("image_resizer")
-logger.setLevel(logging.INFO)
 
 def setup_logging():
     """
@@ -35,13 +33,19 @@ def setup_logging():
     Returns:
         logging.FileHandler: The file handler configured for logging.
     """
-    handler = logging.FileHandler("image_resizer.log")
+    logger = logging.getLogger("image_resizer")
+    handler = logging.StreamHandler()
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     handler.setFormatter(formatter)
+    logger.setLevel(logging.INFO)
+
+    if logger.hasHandlers():
+        logger.handlers.clear()
+
     logger.addHandler(handler)
 
-    return handler
+    return handler, logger
 
 def resize_image(image_path, output_path, size):
     """
@@ -96,7 +100,7 @@ def find_images(input_dir):
     return image_paths, image_count_by_type
 
 
-def process_images(input_dir, output_dir, size, max_workers):
+def process_images(input_dir, output_dir, size, max_workers, logger):
     """
     Processes and resizes images from the input directory
     and saves them to the output directory.
@@ -117,14 +121,14 @@ def process_images(input_dir, output_dir, size, max_workers):
     images, image_count_by_type = find_images(input_dir)
 
     if not images:
-        logging.warning(f"No images found in the directory: {input_dir}")
+        logger.warning(f"No images found in the directory: {input_dir}")
         return
 
-    logging.info(
+    logger.info(
         f"Found {len(images)} images in {input_dir}. Starting resizing process...")
 
     for ext, count in image_count_by_type.items():
-        logging.info(f"Found {count} {ext} images.")
+        logger.info(f"Found {count} {ext} images.")
 
     image_tasks = [
         (image_path, Path(output_dir) / image_path.relative_to(input_dir))
@@ -142,11 +146,12 @@ def process_images(input_dir, output_dir, size, max_workers):
 
     end_time = time.time()
     elapsed_time = end_time - start_time
-    logging.info(
+    logger.info(
         f"Time taken to resize {len(images)} images: {elapsed_time:.2f} seconds.")
 
 def main():
-    handler = setup_logging()
+    handler, logger = setup_logging()
+
     try:
         parser = argparse.ArgumentParser(
             description="Resize images in a folder recursively.")
@@ -162,11 +167,20 @@ def main():
 
         args = parser.parse_args()
 
-        logging.info(
+        logger.info(
             f"Starting image resizing with {args.workers} workers. Target size: "
             f"{args.size[0]}x{args.size[1]}.")
-        process_images(args.input_dir, args.output_dir, tuple(args.size), args.workers)
-        logging.info("Image resizing process completed.")
+
+        process_images(
+            args.input_dir,
+            args.output_dir,
+            tuple(args.size),
+            args.workers,
+            logger)
+
+        logger.info("Image resizing process completed.")
+    except Exception:
+        logger.exception("An error occurred during the image resizing process.")
     finally:
         logger.removeHandler(handler)
         handler.close()
