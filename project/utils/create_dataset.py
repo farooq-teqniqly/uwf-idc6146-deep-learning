@@ -14,6 +14,7 @@ labels, and filenames.
 import argparse
 import os
 import pickle
+from typing import Tuple, List, Any
 
 import tensorflow as tf
 
@@ -75,11 +76,10 @@ def save_dataset(input_dir, output_file):
         msg = f"Error saving data to {output_file}: {e}"
         raise IOError(msg) from e
 
-def load_dataset(file_name):
+
+def load_dataset(file_name: str) -> Tuple[List[Any], List[Any], List[Any]]:
     """
-
     load_dataset(file_name)
-
     Loads a dataset from a specified file.
 
     Parameters:
@@ -87,13 +87,22 @@ def load_dataset(file_name):
 
     Returns:
     tuple: A tuple containing three elements:
-        - train_images: The training images.
-        - train_labels: The labels for the training images.
-        - batch_image_files: The batch image files.
+        - train_images (list): The training images.
+        - train_labels (list): The labels for the training images.
+        - batch_image_files (list): The batch image files.
     """
-    with open(file_name, "rb") as file:
-        data = pickle.load(file)
-    return data["train_images"], data["train_labels"], data["batch_image_files"]
+    try:
+        with open(file_name, "rb") as file:
+            data = pickle.load(file)
+        if not all(key in data for key in ["train_images", "train_labels", "batch_image_files"]):
+            raise KeyError("Missing one or more required keys in the loaded data")
+        return data["train_images"], data["train_labels"], data["batch_image_files"]
+    except (FileNotFoundError, IOError) as e:
+        raise RuntimeError(f"Error opening the file {file_name}: {e}")
+    except pickle.UnpicklingError as e:
+        raise RuntimeError(f"Error unpickling the file {file_name}: {e}")
+    except KeyError as e:
+        raise RuntimeError(f"Error with loaded data's keys: {e}")
 
 def main():
     parser = argparse.ArgumentParser(
