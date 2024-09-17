@@ -83,7 +83,8 @@ def resize_image(image_path, output_path, size):
             resized_img.save(output_path)
         logging.info(f"Resized and saved: {output_path}")
     except Exception as e:
-        logging.error(f"Error resizing image {image_path}: {e}")
+        logging.error(
+            f"Error resizing image {image_path}: {type(e).__name__} - {e}")
 
 
 def find_images(input_dir):
@@ -162,7 +163,10 @@ def process_images(input_dir, output_dir, size, max_workers, logger):
                    image_path, output_path in image_tasks]
 
         for future in futures:
-            future.result()
+            try:
+                future.result()
+            except Exception as e:
+                logger.error(f"Error in processing a future: {e}")
 
     end_time = time.time()
     elapsed_time = end_time - start_time
