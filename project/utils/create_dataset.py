@@ -36,7 +36,12 @@ def save_dataset(input_dir, output_file):
         raise ValueError(msg)
 
     images_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1. / 255)
-    generator = images_generator.flow_from_directory(input_dir)
+
+    try:
+        generator = images_generator.flow_from_directory(input_dir)
+    except Exception as e:
+        msg = f"Error generating image data from {input_dir}: {e}"
+        raise IOError(msg) from e
 
     all_images = []
     all_labels = []
