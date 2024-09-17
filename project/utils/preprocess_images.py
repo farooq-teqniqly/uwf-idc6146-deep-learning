@@ -137,6 +137,11 @@ def process_images(
     Returns:
         None
     """
+
+    if max_workers < 1:
+        msg = "Value must be greater than 0 for max_workers."
+        raise ValueError(msg)
+
     images, image_count_by_type = find_images(input_dir)
 
     if not images:

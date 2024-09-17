@@ -1,7 +1,9 @@
 import os
 import unittest
 from pathlib import Path
+from unittest.mock import MagicMock
 
+import pytest
 from parameterized import parameterized
 from PIL import Image
 
@@ -9,6 +11,12 @@ from project.utils import preprocess_images
 
 
 class TestPreprocessImages(unittest.TestCase):
+    def setUp(self):
+        self.log_mock = MagicMock()
+
+    def tearDown(self):
+        self.log_mock.reset_mock()
+
     def create_dummy_image(self, path, size):
         with Image.new("RGB", size) as img:
             img.save(path)
@@ -32,6 +40,20 @@ class TestPreprocessImages(unittest.TestCase):
 
         os.remove(image_path)
         os.remove(output_path)
+
+    @parameterized.expand([
+        (0,),
+        (-1,),
+    ])
+    def test_invalid_workers(self, workers):
+        with pytest.raises(ValueError):
+            preprocess_images.process_images(
+                Path("inputdir"),
+                Path("outputdir"),
+                (10, 10),
+                self.log_mock,
+                workers)
+
 
 
 if __name__ == "__main__":
