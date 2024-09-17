@@ -17,6 +17,7 @@ import time
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
+from typing import Tuple
 
 from PIL import Image
 
@@ -61,23 +62,20 @@ def setup_logging():
 
     return console_handler, file_handler, logger
 
-def resize_image(image_path:Path, output_path:Path, size):
+def resize_image(image_path:Path, output_path:Path, size:Tuple[int,int]):
     """
-    Resize an image to specified dimensions and save the output.
+    resize_image(image_path, output_path, size)
 
-    Args:
-        image_path (Path): The path to the source image.
-        output_path (Path): The path where the resized image will be saved.
-        size (tuple): The desired dimensions for the resized image as a
-        tuple (width, height).
+    Resizes the image located at the given image path and saves the resized image to
+    the specified output path.
 
-    Raises:
-        OSError: If an error occurs during the opening or resizing of the image.
-        IOError: If an error occurs during the saving of the image.
+    Parameters:
+    image_path (Path): The file path to the original image.
+    output_path (Path): The file path to save the resized image.
+    size (Tuple[int, int]): The target size as a tuple (width, height)
 
-    Logs:
-        Logs an info message upon successful resizing and saving of the image.
-        Logs an error message if an exception is encountered during the process.
+    Exceptions:
+    Logs an error message if an exception occurs during the image resizing process.
     """
     try:
         with Image.open(image_path) as img:
@@ -118,29 +116,26 @@ def find_images(input_dir:Path):
     return image_paths, image_count_by_type
 
 
-def process_images(input_dir:Path, output_dir:Path, size, max_workers, logger):
+def process_images(
+        input_dir:Path,
+        output_dir:Path,
+        size:Tuple[int,int],
+        logger,
+        max_workers:int=1):
     """
-    Processes images in a given input directory by resizing them and saving them to an
+    Processes images by resizing them to the specified size and saving them to the
     output directory.
 
-    Parameters:
-    input_dir (Path): The directory containing the images to be processed.
-    output_dir (Path): The directory where resized images will be saved.
-    size (tuple): The desired size (width, height) for resizing the images.
-    max_workers (int): The maximum number of worker threads to use for resizing images.
-    logger (logging.Logger): Logger instance for logging messages during the process.
+    Args:
+        input_dir (Path): Directory containing input images.
+        output_dir (Path): Directory where resized images will be saved.
+        size (Tuple[int, int]): Target size for resizing images.
+        logger: Logger instance used for logging information and errors.
+        max_workers (int, optional): Maximum number of worker threads for parallel
+        processing. Defaults to 1.
 
-    Functionality:
-    1. Finds images in the specified input directory.
-    2. Logs a warning message if no images are found and exits the function.
-    3. Logs the number of images found and starts the resizing process.
-    4. Logs the count of images by their file extension/type.
-    5. Prepares a list of tasks for resizing images, each task including the image path
-    and the corresponding output path.
-    6. Uses a ProcessPoolExecutor to resize images concurrently, respecting the
-    max_workers limit.
-    7. Times the entire resizing process and logs the time taken to resize all the
-    images.
+    Returns:
+        None
     """
     images, image_count_by_type = find_images(input_dir)
 
