@@ -61,20 +61,23 @@ def setup_logging():
 
     return console_handler, file_handler, logger
 
-def resize_image(image_path, output_path, size):
+def resize_image(image_path:Path, output_path:Path, size):
     """
-    Resize an image to a specified size and save it to a given path.
+    Resize an image to specified dimensions and save the output.
 
-    Parameters:
-    image_path (str or Path): Path to the input image file
-    output_path (str or Path): Path to save the resized image
-    size (tuple): Desired size for the resized image as (width, height)
+    Args:
+        image_path (Path): The path to the source image.
+        output_path (Path): The path where the resized image will be saved.
+        size (tuple): The desired dimensions for the resized image as a
+        tuple (width, height).
 
-    Logs output:
-    Logs informational messages about the status and errors encountered during resizing.
+    Raises:
+        OSError: If an error occurs during the opening or resizing of the image.
+        IOError: If an error occurs during the saving of the image.
 
-    Exceptions:
-    Catches general exceptions and logs an error message in case of failures.
+    Logs:
+        Logs an info message upon successful resizing and saving of the image.
+        Logs an error message if an exception is encountered during the process.
     """
     try:
         with Image.open(image_path) as img:
@@ -87,7 +90,7 @@ def resize_image(image_path, output_path, size):
             f"Error resizing image {image_path}: {type(e).__name__} - {e}")
 
 
-def find_images(input_dir):
+def find_images(input_dir:Path):
     """
 
     find_images(input_dir)
@@ -95,7 +98,7 @@ def find_images(input_dir):
     Searches for images in the specified directory and its subdirectories.
 
     Parameters:
-    input_dir (str): The directory path where the search will be performed.
+    input_dir (Path): The directory path where the search will be performed.
 
     Returns:
     tuple: A tuple containing two elements:
@@ -107,7 +110,7 @@ def find_images(input_dir):
     image_count_by_type = defaultdict(int)
     image_paths = []
 
-    for file in Path(input_dir).rglob("*"):
+    for file in input_dir.rglob("*"):
         if file.suffix.lower() in image_extensions:
             image_paths.append(file)
             image_count_by_type[file.suffix.lower()] += 1  # Count each image type
@@ -115,14 +118,14 @@ def find_images(input_dir):
     return image_paths, image_count_by_type
 
 
-def process_images(input_dir, output_dir, size, max_workers, logger):
+def process_images(input_dir:Path, output_dir:Path, size, max_workers, logger):
     """
     Processes images in a given input directory by resizing them and saving them to an
     output directory.
 
     Parameters:
-    input_dir (str): The directory containing the images to be processed.
-    output_dir (str): The directory where resized images will be saved.
+    input_dir (Path): The directory containing the images to be processed.
+    output_dir (Path): The directory where resized images will be saved.
     size (tuple): The desired size (width, height) for resizing the images.
     max_workers (int): The maximum number of worker threads to use for resizing images.
     logger (logging.Logger): Logger instance for logging messages during the process.
@@ -152,7 +155,7 @@ def process_images(input_dir, output_dir, size, max_workers, logger):
         logger.info(f"Found {count} {ext} images.")
 
     image_tasks = [
-        (image_path, Path(output_dir) / image_path.relative_to(input_dir))
+        (image_path, output_dir / image_path.relative_to(input_dir))
         for image_path in images
     ]
 
