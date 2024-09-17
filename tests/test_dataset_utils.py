@@ -1,12 +1,11 @@
 import os
-import pickle
 import tempfile
 import unittest
 
 import pytest
 import tensorflow as tf
 
-from project.utils.create_dataset import save_dataset
+from project.utils.dataset_utils import load_dataset, save_dataset
 
 
 class SaveDatasetTestCase(unittest.TestCase):
@@ -23,14 +22,16 @@ class SaveDatasetTestCase(unittest.TestCase):
         save_dataset(self.tempdir.name, output_file)
 
     def test_load_dataset(self):
-        with open("imagenet_224.pkl", "rb") as f:
-            data_to_save = pickle.load(f)
+        (train_images, train_labels, batch_image_files) = load_dataset(
+            "imagenet_224.pkl")
 
-        required_keys = ["train_images", "train_labels", "batch_image_files"]
+        assert len(train_images) > 0
+        assert train_images.shape == (32, 256, 256, 3)
 
-        for key in required_keys:
-            assert key in data_to_save
-            assert len(data_to_save[key]) > 0
+        assert len(train_labels) > 0
+        assert train_labels.shape == (32, 10)
+
+        assert len(batch_image_files) == 32
 
     def test_dir_not_existing(self):
         output_file = os.path.join(self.tempdir.name, "output.pkl")
