@@ -72,7 +72,7 @@ def save_dataset(input_dir, output_file):
     try:
         with open(output_file, "wb") as file:
             pickle.dump(data_to_save, file)
-    except (IOError, pickle.PicklingError) as e:
+    except (FileNotFoundError, IOError, pickle.PicklingError) as e:
         msg = f"Error saving data to {output_file}: {e}"
         raise IOError(msg) from e
 

@@ -36,13 +36,13 @@ class SaveDatasetTestCase(unittest.TestCase):
     def test_dir_not_existing(self):
         output_file = os.path.join(self.tempdir.name, "output.pkl")
 
-        with pytest.raises(Exception):
+        with pytest.raises(ValueError):
             save_dataset("nonexistent", output_file)
 
     def test_wrong_output_file_path(self):
         output_file = os.path.join(self.tempdir.name, "nonexistent", "output.pkl")
 
-        with pytest.raises(Exception):
+        with pytest.raises(IOError):
             save_dataset(self.tempdir.name, output_file)
 
 
