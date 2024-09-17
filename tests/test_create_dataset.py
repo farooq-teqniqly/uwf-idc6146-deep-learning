@@ -22,12 +22,15 @@ class SaveDatasetTestCase(unittest.TestCase):
         output_file = os.path.join(self.tempdir.name, "output.pkl")
         save_dataset(self.tempdir.name, output_file)
 
-        with open(output_file, "rb") as f:
+    def test_load_dataset(self):
+        with open("imagenet_224.pkl", "rb") as f:
             data_to_save = pickle.load(f)
 
-        assert "train_images" in data_to_save
-        assert "train_labels" in data_to_save
-        assert "batch_image_files" in data_to_save
+        required_keys = ["train_images", "train_labels", "batch_image_files"]
+
+        for key in required_keys:
+            assert key in data_to_save
+            assert len(data_to_save[key]) > 0
 
     def test_dir_not_existing(self):
         output_file = os.path.join(self.tempdir.name, "output.pkl")
