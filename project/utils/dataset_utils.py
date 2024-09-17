@@ -1,38 +1,58 @@
 """
-This module handles the loading and saving of image data for training purposes.
+dataset_utils.py
 
-It uses TensorFlow's Keras preprocessing utilities to generate batches of
-images from a directory,
-and then saves that data to a pickle file for later use. Functions are also
-provided to load this
-saved dataset back into memory.
+This module contains utility functions for saving and loading datasets, specifically
+tailored for handling large datasets used in machine learning applications.
+The primary functions provided in this module are:
 
-Classes and functions included:
-- `load_dataset`: Loads a dataset from a pickle file and returns the images,
-labels, and filenames.
+- `save_dataset`: Saves the dataset to a specified file in a compressed format
+for efficient storage.
+- `load_dataset`: Loads the dataset from a specified file, reconstructing
+the structure necessary for training models.
+
+These functions facilitate the seamless handling of datasets, ensuring that
+they can be easily saved and retrieved without loss or corruption.
+
+Functions:
+    save_dataset: Saves the given dataset to a file.
+    load_dataset: Loads the dataset from a file.
+    main: A main function to demonstrate the usage of the utility
+    functions or for standalone script execution.
+
+Attributes:
+    tf: TensorFlow module import, if applicable.
 """
 import argparse
-import os
 import pickle
-from typing import Any, List, Tuple
+from pathlib import Path
+from typing import List, Tuple
 
 import tensorflow as tf
 
 
-def save_dataset(input_dir, output_file):
+def save_dataset(input_dir:Path, output_file:Path) -> None:
     """
-        Saves a dataset into a file.
-        This function processes image data from the specified input directory,
-        normalizes the images, and saves them along with their labels and
-        filenames into a specified output file using pickle.
-        Args:
-            input_dir (str): The path to the directory containing the images.
-            output_file (str): The path where the processed dataset will be saved.
-        Raises:
-            ValueError: If the input directory does not exist.
-            IOError: If there is an error processing images or saving data.
-        """
-    if not os.path.isdir(input_dir):
+    Save a dataset of images and their corresponding labels to a file.
+
+    Args:
+        input_dir (Path): The directory containing the image dataset.
+        output_file (Path): The file path where the dataset will be saved.
+
+    Raises:
+        ValueError: If the input directory does not exist.
+        IOError: If there is an error generating image data from the input directory
+        or saving data to the output file.
+
+    The function performs the following steps:
+    1. Verifies that the input directory exists.
+    2. Initializes an image data generator with rescaling.
+    3. Generates image data from the input directory.
+    4. Iterates over the dataset and collects images, labels, and filenames.
+    5. Stores the collected data in a dictionary.
+    6. Saves the dictionary to the specified output file using pickle serialization.
+    """
+
+    if not input_dir.exists():
         msg = f"The input directory {input_dir} does not exist."
         raise ValueError(msg)
 
@@ -77,19 +97,22 @@ def save_dataset(input_dir, output_file):
         raise IOError(msg) from e
 
 
-def load_dataset(file_name: str) -> Tuple[List[Any], List[Any], List[Any]]:
+def load_dataset(file_name: Path) -> Tuple[list, list, List[str]]:
     """
-    load_dataset(file_name)
-    Loads a dataset from a specified file.
+    Loads a dataset from a pickle file.
 
-    Parameters:
-    file_name (str): The path to the dataset file.
+    Arguments:
+    file_name: Path to the file containing the dataset.
 
     Returns:
-    tuple: A tuple containing three elements:
-        - train_images (list): The training images.
-        - train_labels (list): The labels for the training images.
-        - batch_image_files (list): The batch image files.
+    A tuple containing three elements:
+    - List of training images.
+    - List of training labels.
+    - List of batch image file names.
+
+    Raises:
+    RuntimeError: If the file cannot be opened, read, or unpickled;
+    or if required keys are missing from the dataset.
     """
     required_keys = ["train_images", "train_labels", "batch_image_files"]
 
