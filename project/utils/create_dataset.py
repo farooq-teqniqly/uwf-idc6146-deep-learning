@@ -50,16 +50,23 @@ def save_dataset(input_dir, output_file):
     with open(output_file, "wb") as file:
         pickle.dump(data_to_save, file)
 
-def load_dataset():
+def load_dataset(file_name):
     """
-        Loads a dataset from a pickle file.
 
-        Reads the "dataset.pkl" file and loads its contents using the pickle module.
+    load_dataset(file_name)
 
-        Returns:
-            tuple: Contains `train_images`, `train_labels`, and `batch_image_files`.
+    Loads a dataset from a specified file.
+
+    Parameters:
+    file_name (str): The path to the dataset file.
+
+    Returns:
+    tuple: A tuple containing three elements:
+        - train_images: The training images.
+        - train_labels: The labels for the training images.
+        - batch_image_files: The batch image files.
     """
-    with open("dataset.pkl", "rb") as file:
+    with open(file_name, "rb") as file:
         data = pickle.load(file)
     return data["train_images"], data["train_labels"], data["batch_image_files"]
 
