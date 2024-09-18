@@ -25,10 +25,9 @@ Attributes:
 import argparse
 import pickle
 from pathlib import Path
-from typing import List, Tuple
-from sklearn.model_selection import train_test_split
 
 import tensorflow as tf
+from sklearn.model_selection import train_test_split
 
 
 def save_dataset(
@@ -60,12 +59,15 @@ def save_dataset(
         msg = f"The input directory {input_dir} does not exist."
         raise ValueError(msg)
     if not 0 < train_size < 1:
-        raise ValueError("Training set percentage must be a value between 0 and 1.")
+        msg = "Training set percentage must be a value between 0 and 1."
+        raise ValueError(msg)
     if not 0 < val_size < 1:
-        raise ValueError("Validation set percentage must be a value between 0 and 1.")
+        msg = "Validation set percentage must be a value between 0 and 1."
+        raise ValueError(msg)
     if train_size + val_size >= 1:
-        raise ValueError(
-            "The sum of training and validation set percentages cannot exceed or be equal to 1.")
+        msg = ("The sum of training and validation set percentages cannot exceed or "
+               "be equal to 1.")
+        raise ValueError(msg)
 
     test_size = 1 - train_size - val_size
     images_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1. / 255)
@@ -89,50 +91,65 @@ def save_dataset(
         except StopIteration:
             break
 
-    X_train, X_temp, y_train, y_temp, filenames_train, filenames_temp = train_test_split(
-        all_images, all_labels, all_filenames, train_size=train_size, random_state=42)
+    (x_train,
+     x_temp,
+     y_train,
+     y_temp,
+     filenames_train,
+     filenames_temp) = train_test_split(
+        all_images,
+        all_labels,
+        all_filenames,
+        train_size=train_size,
+        random_state=42)
 
-    X_val, X_test, y_val, y_test, filenames_test, filenames_val = train_test_split(
-        X_temp, y_temp, filenames_temp, test_size=(test_size / (test_size + val_size)),
+    (x_val,
+     x_test,
+     y_val,
+     y_test,
+     filenames_test,
+     filenames_val) = train_test_split(
+        x_temp,
+        y_temp,
+        filenames_temp,
+        test_size=(test_size / (test_size + val_size)),
         random_state=42)
 
     data_to_save = dict(
-        train_images=X_train,
+        train_images=x_train,
         train_labels=y_train,
-        val_images=X_val,
+        val_images=x_val,
         val_labels=y_val,
-        test_images=X_test,
+        test_images=x_test,
         test_labels=y_test,
         filenames=dict(
             train=filenames_train,
             val=filenames_val,
-            test=filenames_test
-        )
+            test=filenames_test,
+        ),
     )
 
     try:
-        with open(output_file, 'wb') as file:
+        with open(output_file, "wb") as file:
             pickle.dump(data_to_save, file)
     except (FileNotFoundError, IOError, pickle.PicklingError) as e:
         msg = f"Error saving data to {output_file}: {e}"
         raise IOError(msg) from e
 
-def load_dataset(file_name: Path) -> Tuple[list, list, List[str]]:
+def load_dataset(file_name: Path) -> tuple:
     """
-    Loads a dataset from a pickle file.
+    Loads a dataset from a file and verifies the integrity of the data.
 
-    Arguments:
-    file_name: Path to the file containing the dataset.
+    Parameters:
+    file_name (Path): The path to the file containing the dataset.
 
     Returns:
-    A tuple containing three elements:
-    - List of training images.
-    - List of training labels.
-    - List of batch image file names.
+    tuple: A tuple containing the train images, train labels, test images, test labels,
+    validation images, validation labels, and filenames.
 
     Raises:
-    RuntimeError: If the file cannot be opened, read, or unpickled;
-    or if required keys are missing from the dataset.
+    RuntimeError: If the file cannot be opened, unpickled, or is missing
+    any required key.
     """
     required_keys = [
         "train_images",
@@ -150,13 +167,9 @@ def load_dataset(file_name: Path) -> Tuple[list, list, List[str]]:
         if not all(key in data for key in required_keys):
             msg = f"Missing one or more required keys in the loaded data: {file_name}"
             raise KeyError(msg)
-        return (data[required_keys[0]],
-                data[required_keys[1]],
-                data[required_keys[2]],
-                data[required_keys[3]],
-                data[required_keys[4]],
-                data[required_keys[5]],
-                data[required_keys[6]],)
+
+        return tuple(data[key] for key in required_keys)
+
     except (FileNotFoundError, IOError) as e:
         msg = f"Error opening the file {file_name}: {e}"
         raise RuntimeError(msg) from e

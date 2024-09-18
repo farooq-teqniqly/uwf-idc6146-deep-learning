@@ -56,7 +56,7 @@ class SaveDatasetTestCase(unittest.TestCase):
             save_dataset(input_dir, output_file)
 
     def test_wrong_output_file_path(self):
-        input_dir = Path(self.tempdir.name)
+        input_dir = Path("./images")
         output_file = Path(os.path.join(self.tempdir.name, "nonexistent", "output.pkl"))
 
         with pytest.raises(IOError):
