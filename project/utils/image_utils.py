@@ -7,17 +7,10 @@ def create_train_test_validation_sets(
         filter) -> None:
 
     files = input_dir.rglob(filter)
+    output_folders = ["train", "val", "test"]
 
-    training_set_folder_path = os.path.join(output_dir,"train")
-    validation_set_folder_path = os.path.join(output_dir, "val")
-    test_set_folder_path = os.path.join(output_dir,"test")
-
-    if not os.path.exists(training_set_folder_path):
-        os.makedirs(training_set_folder_path)
-
-    if not os.path.exists(test_set_folder_path):
-        os.makedirs(test_set_folder_path)
-
-    if not os.path.exists(validation_set_folder_path):
-        os.makedirs(validation_set_folder_path)
+    for output_folder in output_folders:
+        full_path = os.path.join(output_dir, output_folder)
+        if not os.path.exists(full_path):
+            os.makedirs(full_path)
 
