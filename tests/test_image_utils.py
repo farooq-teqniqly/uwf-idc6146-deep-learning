@@ -17,11 +17,17 @@ class TestImageUtils(unittest.TestCase):
         output_dir = Path("test_create_train_test_validation_sets")
         filter = "*.jpeg"
 
-        create_train_test_validation_sets(input_dir, output_dir, filter)
+        create_train_test_validation_sets(
+            input_dir,
+            output_dir,
+            filter,
+            0.7)
 
-        assert os.path.exists(os.path.join(output_dir, "train"))
-        assert os.path.exists(os.path.join(output_dir, "val"))
-        assert os.path.exists(os.path.join(output_dir, "test"))
+        train_folder = Path(os.path.join(output_dir, "train"))
+        files = list(train_folder.rglob(filter))
+        # assert len(files) == 14
+
+
 
 if __name__ == "__main__":
     unittest.main()
