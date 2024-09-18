@@ -48,6 +48,9 @@ class SaveDatasetTestCase(unittest.TestCase):
         assert len(filenames["test"]) == 8
         assert len(filenames["val"]) == 4
 
+        for image in train_images + val_images + test_images:
+            assert image.shape == (224, 224, 3)
+
     def test_dir_not_existing(self):
         input_dir = Path("nonexistent")
         output_file = Path(os.path.join(self.tempdir.name, "output.pkl"))
