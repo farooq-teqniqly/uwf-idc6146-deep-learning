@@ -28,7 +28,7 @@ from pathlib import Path
 
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
-
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
 def save_dataset(
         input_dir: Path,
@@ -69,11 +69,18 @@ def save_dataset(
                "be equal to 1.")
         raise ValueError(msg)
 
-    test_size = 1 - train_size - val_size
-    images_generator = tf.keras.preprocessing.image.ImageDataGenerator(rescale=1. / 255)
+    images_generator = ImageDataGenerator(
+        rescale = 1./255,
+        shear_range = 0.2,
+        zoom_range = 0.2,
+        horizontal_flip = True)
 
     try:
-        generator = images_generator.flow_from_directory(input_dir)
+        generator = images_generator.flow_from_directory(
+            input_dir,
+            batch_size=32,
+            class_mode="binary")
+
     except Exception as e:
         msg = f"Error generating image data from {input_dir}: {e}"
         raise IOError(msg) from e
@@ -90,6 +97,8 @@ def save_dataset(
             all_filenames.extend(batch_filenames)
         except StopIteration:
             break
+
+    test_size = 1 - train_size - val_size
 
     (x_train,
      x_temp,
