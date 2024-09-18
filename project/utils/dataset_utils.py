@@ -25,35 +25,37 @@ Attributes:
 import argparse
 import pickle
 from pathlib import Path
+from typing import Tuple
 
-import tensorflow as tf
 from sklearn.model_selection import train_test_split
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
 
 def save_dataset(
         input_dir: Path,
         output_file: Path,
+        image_target_size: Tuple[int, int]=(224, 224),
         train_size=0.7,
         val_size=0.2) -> None:
     """
-    Save a dataset of images and their corresponding labels to a file.
-    Args:
-        input_dir (Path): The directory containing the image dataset.
-        output_file (Path): The file path where the dataset will be saved.
-        train_size (float): Proportion of the dataset to include in the training set.
-        val_size (float): Proportion of the dataset to include in the validation set.
-    Raises:
-        ValueError: If the input directory does not exist or if sizes are incorrect.
-        IOError: If there is an error generating image data from the input directory
-                 or saving data to the output file.
-    The function performs the following steps:
-    1. Verifies that the input directory exists.
-    2. Initializes an image data generator with rescaling.
-    3. Generates image data from the input directory.
-    4. Iterates over the dataset and collects images, labels, and filenames.
-    5. Splits the data into training, validation, and test sets.
-    6. Stores the collected data in a dictionary.
-    7. Saves the dictionary to the specified output file using pickle serialization.
+        Save images from a directory to a file in a structured format, while splitting
+        them into training, validation, and test sets.
+
+        Parameters:
+        input_dir (Path): The directory containing the image files.
+        output_file (Path): The file to save the structured dataset.
+        image_target_size (Tuple[int, int], optional): The target size for resizing
+        images. Defaults to (224, 224).
+        train_size (float, optional): The proportion of images to be used for training.
+        Defaults to 0.7.
+        val_size (float, optional): The proportion of images to be used for validation.
+        Defaults to 0.2.
+
+        Raises:
+        ValueError: If the input directory does not exist, or if train_size and val_size
+        are not within the range (0, 1), or if their sum is >= 1.
+        IOError: If there is an error generating image data from the input directory,
+        or saving the data to the output file.
     """
     if not input_dir.exists():
         msg = f"The input directory {input_dir} does not exist."
@@ -79,7 +81,8 @@ def save_dataset(
         generator = images_generator.flow_from_directory(
             input_dir,
             batch_size=32,
-            class_mode="binary")
+            class_mode="binary",
+            target_size=image_target_size)
 
     except Exception as e:
         msg = f"Error generating image data from {input_dir}: {e}"
