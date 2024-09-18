@@ -138,6 +138,10 @@ def process_images(
         None
     """
 
+    if not all(dim > 0 for dim in size):
+        msg = "Values of size tuple must be greater than 0."
+        raise ValueError(msg)
+
     if max_workers < 1:
         msg = "Value must be greater than 0 for max_workers."
         raise ValueError(msg)

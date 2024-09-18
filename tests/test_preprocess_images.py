@@ -54,6 +54,19 @@ class TestPreprocessImages(unittest.TestCase):
                 self.log_mock,
                 workers)
 
+    @parameterized.expand([
+        ((0, 0),),
+        ((-1, 1),),
+        ((1, -1),),
+    ])
+    def test_invalid_size(self, size):
+        with pytest.raises(ValueError):
+            preprocess_images.process_images(
+                Path("inputdir"),
+                Path("outputdir"),
+                size,
+                self.log_mock)
+
 
 
 if __name__ == "__main__":
