@@ -123,19 +123,27 @@ def process_images(
         logger,
         max_workers:int=1):
     """
-    Processes images by resizing them to the specified size and saving them to the
-    output directory.
+    Processes images from the input directory by resizing them to the specified size
+    and saving them to the output directory.
 
-    Args:
-        input_dir (Path): Directory containing input images.
-        output_dir (Path): Directory where resized images will be saved.
-        size (Tuple[int, int]): Target size for resizing images.
-        logger: Logger instance used for logging information and errors.
-        max_workers (int, optional): Maximum number of worker threads for parallel
-        processing. Defaults to 1.
+    Parameters:
+    input_dir (Path): Path to the directory containing the input images.
+    output_dir (Path): Path to the directory where the resized images will be saved.
+    size (Tuple[int,int]): Desired size to resize images to (width, height).
+    logger: Logger object for logging messages.
+    max_workers (int): Maximum number of worker processes to use.
+
+    Raises:
+    ValueError: If any dimension in 'size' is not greater than 0 or 'max_workers'
+    is less than 1.
+
+    Logs:
+    Warnings if no images are found in the input directory.
+    Information about the number of images found and the resizing process.
+    Errors if any issues occur during the processing of futures.
 
     Returns:
-        None
+    None
     """
 
     if not all(dim > 0 for dim in size):
