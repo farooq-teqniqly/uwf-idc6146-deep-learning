@@ -24,12 +24,10 @@ def create_train_test_validation_sets(
         files = _get_source_files(image_class_folder, input_dir)
         random.shuffle(files)
 
-        train_count = int(len(files) * train_percentage)
-        test_count = int(len(files) * test_percentage)
-
-        train_files = files[:train_count]
-        test_files = files[train_count:train_count + test_count]
-        validation_files = files[train_count + test_count:]
+        test_files, train_files, validation_files = _split_files(
+            files,
+            test_percentage,
+            train_percentage)
 
         train_folder = _create_image_class_output_folder(
             output_folders[0],
@@ -48,6 +46,20 @@ def create_train_test_validation_sets(
             image_class_folder)
 
         _copy_files(validation_files, validation_folder)
+
+
+def _split_files(
+        files:List[str],
+        test_percentage:float,
+        train_percentage:float) -> Tuple[List[str], List[str], List[str]]:
+    train_count = int(len(files) * train_percentage)
+    test_count = int(len(files) * test_percentage)
+
+    train_files = files[:train_count]
+    test_files = files[train_count:train_count + test_count]
+    validation_files = files[train_count + test_count:]
+
+    return test_files, train_files, validation_files
 
 
 def _get_source_files(image_class_folder:str, input_dir:Path) -> List[str]:
