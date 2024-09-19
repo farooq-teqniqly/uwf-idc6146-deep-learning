@@ -13,8 +13,8 @@ def create_train_test_validation_sets(
         input_dir: Path,
         output_dir: Path,
         file_filter,
-        train_percentage: float,
-        test_percentage: float) -> None:
+        train_percentage: float=0.7,
+        test_percentage: float=0.2) -> None:
     output_folders = [_create_output_folder(output_dir, folder_name)
                       for folder_name in [TRAIN_FOLDER, TEST_FOLDER, VAL_FOLDER]]
 

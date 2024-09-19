@@ -5,8 +5,6 @@ from pathlib import Path
 
 from project.utils.image_utils import create_train_test_validation_sets
 
-TRAIN_SPLIT = 0.7
-TEST_SPLIT = 0.2
 TRAIN_FILE_COUNT = 14
 TEST_FILE_COUNT = 4
 VAL_FILE_COUNT = 2
@@ -32,8 +30,6 @@ class TestImageUtils(unittest.TestCase):
             input_dir=self._input_dir,
             output_dir=self._output_dir,
             file_filter=JPEG_FILTER,
-            train_percentage=TRAIN_SPLIT,
-            test_percentage=TEST_SPLIT,
         )
 
         train_folder = Path(os.path.join(self._output_dir, "train", "bird"))
