@@ -73,6 +73,18 @@ class TestImageUtils(unittest.TestCase):
                 self._output_dir,
                 test_percentage=test_pct)
 
+    @parameterized.expand([
+        (0.7, 0.3),
+        (0.6, 0.5),
+    ])
+    def test_train_test_pct_should_be_less_than_1(self, train_pct, test_pct):
+        with pytest.raises(ValueError):
+            create_train_test_validation_sets(
+                self._input_dir,
+                self._output_dir,
+                train_percentage=train_pct,
+                test_percentage=test_pct)
+
     def _get_file_count(self, folder:Path) -> int:
         return len(list(folder.rglob(JPEG_FILTER)))
 

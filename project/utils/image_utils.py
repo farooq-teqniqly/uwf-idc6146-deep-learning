@@ -55,7 +55,8 @@ def create_train_test_validation_sets(
         Default is 0.2.
 
         Raises:
-        ValueError: If train_percentage or test_percentage are not between 0 and 1.
+        ValueError: If train_percentage or test_percentage == 0 or 1
+        ValueError: If train_percentage + test_percentage is >= 1
     """
 
     _ensure_valid_pct(
@@ -65,6 +66,10 @@ def create_train_test_validation_sets(
     _ensure_valid_pct(
         test_percentage,
         "Test percentage must be greater than 0 and less than 1.")
+
+    if train_percentage + test_percentage >= 1:
+        msg = "Sum of training and test percentages cannot exceed 1."
+        raise ValueError(msg)
 
     output_folders = [_create_output_folder(output_dir, folder_name)
                       for folder_name in [TRAIN_FOLDER, TEST_FOLDER, VAL_FOLDER]]
