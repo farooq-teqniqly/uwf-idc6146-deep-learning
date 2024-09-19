@@ -2,6 +2,7 @@ import os.path
 import random
 import shutil
 from pathlib import Path
+from typing import List
 
 TRAIN_FOLDER = "train"
 TEST_FOLDER = "test"
@@ -20,8 +21,7 @@ def create_train_test_validation_sets(
     image_class_folders = os.listdir(input_dir)
 
     for image_class_folder in image_class_folders:
-        source_folder_path = os.path.join(input_dir, image_class_folder)
-        files = _get_files_from_folder(source_folder_path)
+        files = _get_source_files(image_class_folder, input_dir)
         random.shuffle(files)
 
         train_count = int(len(files) * train_percentage)
@@ -49,7 +49,13 @@ def create_train_test_validation_sets(
 
         _copy_files(validation_files, validation_folder)
 
-def _get_files_from_folder(folder_path: str) -> list:
+
+def _get_source_files(image_class_folder:str, input_dir:Path) -> List[str]:
+    source_folder_path = os.path.join(input_dir, image_class_folder)
+    return _get_files_from_folder(source_folder_path)
+
+
+def _get_files_from_folder(folder_path: str) -> List[str]:
     return [os.path.join(folder_path, filename) for filename in os.listdir(folder_path)]
 
 
