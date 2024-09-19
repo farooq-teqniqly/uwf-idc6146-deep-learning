@@ -1,10 +1,7 @@
 import os.path
 import random
 import shutil
-
 from pathlib import Path
-
-from tensorboard.summary.v1 import image
 
 
 def create_train_test_validation_sets(
@@ -24,7 +21,10 @@ def create_train_test_validation_sets(
                                   for image_class in source_image_class_folders]
 
     for source_image_class_folder in source_image_class_folders:
-        source_image_class_folder_full_path = os.path.join(input_dir, source_image_class_folder)
+
+        source_image_class_folder_full_path = os.path.join(
+            input_dir,
+            source_image_class_folder)
 
         files =[os.path.join(source_image_class_folder_full_path, fn)
                 for fn in os.listdir(source_image_class_folder_full_path)]
@@ -44,7 +44,6 @@ def create_train_test_validation_sets(
         for file in test_files:
             shutil.copy2(file, image_class_output_folders[1])
 
-        validation_file_count = file_count - train_file_count - test_file_count
         validation_files = files[train_file_count + test_file_count:]
 
         for file in validation_files:

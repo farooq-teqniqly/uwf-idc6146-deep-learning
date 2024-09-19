@@ -1,9 +1,10 @@
-import unittest
 import os
 import shutil
+import unittest
+from pathlib import Path
 
 from project.utils.image_utils import create_train_test_validation_sets
-from pathlib import Path
+
 
 class TestImageUtils(unittest.TestCase):
 
