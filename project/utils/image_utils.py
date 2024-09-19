@@ -8,7 +8,6 @@ TEST_FOLDER = "test"
 VAL_FOLDER = "val"
 SHUFFLE_ROUNDS = 3
 
-
 def create_train_test_validation_sets(
         input_dir: Path,
         output_dir: Path,
@@ -20,14 +19,8 @@ def create_train_test_validation_sets(
 
     image_class_folders = os.listdir(input_dir)
 
-    image_class_output_folders = [
-        _create_image_class_output_folder(output_folder, image_class)
-        for output_folder in output_folders
-        for image_class in image_class_folders
-    ]
-
-    for source_image_class_folder in image_class_folders:
-        source_folder_path = os.path.join(input_dir, source_image_class_folder)
+    for image_class_folder in image_class_folders:
+        source_folder_path = os.path.join(input_dir, image_class_folder)
         files = _get_files_from_folder(source_folder_path)
         random.shuffle(files)
 
@@ -35,14 +28,26 @@ def create_train_test_validation_sets(
         test_count = int(len(files) * test_percentage)
 
         train_files = files[:train_count]
-        _copy_files(train_files, image_class_output_folders[0])
-
         test_files = files[train_count:train_count + test_count]
-        _copy_files(test_files, image_class_output_folders[1])
-
         validation_files = files[train_count + test_count:]
-        _copy_files(validation_files, image_class_output_folders[2])
 
+        train_folder = _create_image_class_output_folder(
+            output_folders[0],
+            image_class_folder)
+
+        _copy_files(train_files, train_folder)
+
+        test_folder = _create_image_class_output_folder(
+            output_folders[1],
+            image_class_folder)
+
+        _copy_files(test_files, test_folder)
+
+        validation_folder = _create_image_class_output_folder(
+            output_folders[2],
+            image_class_folder)
+
+        _copy_files(validation_files, validation_folder)
 
 def _get_files_from_folder(folder_path: str) -> list:
     return [os.path.join(folder_path, filename) for filename in os.listdir(folder_path)]
