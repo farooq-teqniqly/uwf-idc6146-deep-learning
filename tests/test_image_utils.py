@@ -41,7 +41,8 @@ class TestImageUtils(unittest.TestCase):
         test_file_count = list(test_folder.rglob(filter))
         assert len(test_file_count) == 4
 
-
+        val_file_count = list(val_folder.rglob(filter))
+        assert len(val_file_count) == 2
 
 if __name__ == "__main__":
     unittest.main()

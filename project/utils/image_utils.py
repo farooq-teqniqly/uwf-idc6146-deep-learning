@@ -44,6 +44,11 @@ def create_train_test_validation_sets(
         for file in test_files:
             shutil.copy2(file, image_class_output_folders[1])
 
+        validation_file_count = file_count - train_file_count - test_file_count
+        validation_files = files[train_file_count + test_file_count:]
+
+        for file in validation_files:
+            shutil.copy2(file, image_class_output_folders[2])
 
 def _create_output_folder(root_path:Path, folder_name:str) -> Path:
     output_path = os.path.join(root_path, folder_name)
