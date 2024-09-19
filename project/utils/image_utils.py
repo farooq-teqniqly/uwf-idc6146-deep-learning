@@ -59,7 +59,7 @@ def create_train_test_validation_sets(
         ValueError: If train_percentage + test_percentage is >= 1
     """
 
-    _ensure_valid_pct(train_percentage, test_percentage)
+    _ensure_valid_percentages(train_percentage, test_percentage)
 
     output_folders = [_create_output_folder(output_dir, folder_name)
                       for folder_name in [TRAIN_FOLDER, TEST_FOLDER, VAL_FOLDER]]
@@ -80,7 +80,7 @@ def create_train_test_validation_sets(
         _copy_files_to_output(output_folders[2], image_class_folder, validation_files)
 
 
-def _ensure_valid_pct(train_percentage:float, test_percentage:float):
+def _ensure_valid_percentages(train_percentage:float, test_percentage:float):
     if not 0 < train_percentage < 1:
         msg = "Training percentage must be greater than 0 and less than 1."
         raise ValueError(msg)
