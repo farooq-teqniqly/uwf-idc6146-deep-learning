@@ -11,7 +11,8 @@ def create_train_test_validation_sets(
         input_dir:Path,
         output_dir:Path,
         filter,
-        train_pct:float) -> None:
+        train_pct:float,
+        test_pct:float) -> None:
 
     output_folders = [_create_output_folder(output_dir, f) for f
                       in ["train", "test", "val"]]
@@ -36,6 +37,12 @@ def create_train_test_validation_sets(
 
         for file in train_files:
             shutil.copy2(file, image_class_output_folders[0])
+
+        test_file_count = int(file_count * test_pct)
+        test_files = files[train_file_count:train_file_count + test_file_count]
+
+        for file in test_files:
+            shutil.copy2(file, image_class_output_folders[1])
 
 
 def _create_output_folder(root_path:Path, folder_name:str) -> Path:

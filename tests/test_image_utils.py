@@ -25,11 +25,12 @@ class TestImageUtils(unittest.TestCase):
             input_dir,
             output_dir,
             filter,
-            0.7)
+            0.7,
+        0.2)
 
         train_folder = Path(os.path.join(output_dir, "train", "bird"))
-        val_folder = Path(os.path.join(output_dir, "val", "bird"))
         test_folder = Path(os.path.join(output_dir, "test", "bird"))
+        val_folder = Path(os.path.join(output_dir, "val", "bird"))
 
         assert os.path.exists(train_folder)
         assert os.path.exists(val_folder)
@@ -37,6 +38,9 @@ class TestImageUtils(unittest.TestCase):
 
         train_file_count = list(train_folder.rglob(filter))
         assert len(train_file_count) == 14
+
+        test_file_count = list(test_folder.rglob(filter))
+        assert len(test_file_count) == 4
 
 
 
