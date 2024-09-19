@@ -8,9 +8,6 @@ from parameterized import parameterized
 
 from project.utils.image_utils import create_train_test_validation_sets
 
-TRAIN_FILE_COUNT = 14
-TEST_FILE_COUNT = 4
-VAL_FILE_COUNT = 2
 JPEG_FILTER = "*.jpeg"
 
 
