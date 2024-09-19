@@ -12,7 +12,7 @@ SHUFFLE_ROUNDS = 3
 def create_train_test_validation_sets(
         input_dir: Path,
         output_dir: Path,
-        file_filter,
+        file_filter="*.jpeg",
         train_percentage: float=0.7,
         test_percentage: float=0.2) -> None:
     output_folders = [_create_output_folder(output_dir, folder_name)

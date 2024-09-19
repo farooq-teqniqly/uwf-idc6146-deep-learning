@@ -26,11 +26,7 @@ class TestImageUtils(unittest.TestCase):
     def test_create_train_test_validation_sets(self):
         self.create_output_dir_if_not_exists()
 
-        create_train_test_validation_sets(
-            input_dir=self._input_dir,
-            output_dir=self._output_dir,
-            file_filter=JPEG_FILTER,
-        )
+        create_train_test_validation_sets(self._input_dir, self._output_dir)
 
         train_folder = Path(os.path.join(self._output_dir, "train", "bird"))
         test_folder = Path(os.path.join(self._output_dir, "test", "bird"))
