@@ -3,6 +3,7 @@ import shutil
 import unittest
 from pathlib import Path
 
+import pytest
 from parameterized import parameterized
 
 from project.utils.image_utils import create_train_test_validation_sets
@@ -19,6 +20,9 @@ class TestImageUtils(unittest.TestCase):
         self._output_dir = Path("test_create_train_test_validation_sets")
 
     def tearDown(self):
+        if not os.path.exists(self._output_dir):
+            return
+
         shutil.rmtree(self._output_dir)
 
     def create_output_dir_if_not_exists(self):
@@ -46,6 +50,28 @@ class TestImageUtils(unittest.TestCase):
         assert self._get_file_count(train_folder) == expected_train_file_count
         assert self._get_file_count(test_folder) == expected_test_file_count
         assert self._get_file_count(val_folder) == expected_validation_file_count
+
+    @parameterized.expand([1, 1.1, 0, -0.01, -1])
+    def test_invalid_train_pct_raises_error(
+            self,
+            train_pct):
+
+        with pytest.raises(ValueError):
+            create_train_test_validation_sets(
+                self._input_dir,
+                self._output_dir,
+                train_percentage=train_pct)
+
+    @parameterized.expand([1, 1.1, 0, -0.01, -1])
+    def test_invalid_test_pct_raises_error(
+            self,
+            test_pct):
+
+        with pytest.raises(ValueError):
+            create_train_test_validation_sets(
+                self._input_dir,
+                self._output_dir,
+                test_percentage=test_pct)
 
     def _get_file_count(self, folder:Path) -> int:
         return len(list(folder.rglob(JPEG_FILTER)))

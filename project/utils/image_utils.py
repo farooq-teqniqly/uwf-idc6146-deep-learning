@@ -38,23 +38,34 @@ def create_train_test_validation_sets(
         train_percentage: float = 0.7,
         test_percentage: float = 0.2) -> None:
     """
-    Creates train, test, and validation sets from the given input directory and outputs
-    them to the specified output directory.
+        Splits and copies files from an input directory into train, test, and
+        validation sets  based on given percentages, and stores them in an output
+        directory.
 
-    Parameters:
-        input_dir (Path): The directory containing the input images organized in
-        subdirectories per class.
-        output_dir (Path): The directory where the train, test, and validation sets
-        will be saved.
-        file_filter (str): The glob pattern to filter files in the input directory.
-        train_percentage (float): The percentage of images to be used for the
-        training set.
-        test_percentage (float): The percentage of images to be used for the
-        testing set.
+        Parameters:
+        input_dir (Path): Path to the input directory containing class sub-folders with
+        files.
+        output_dir (Path): Path to the output directory where train, test, and
+        validation sub-folders will be created.
+        file_filter (str): Glob pattern to filter files in the input directory.
+        Default is "*.jpeg".
+        train_percentage (float): Percentage of files to be used for training.
+        Default is 0.7.
+        test_percentage (float): Percentage of files to be used for testing.
+        Default is 0.2.
 
-    Returns:
-        None
+        Raises:
+        ValueError: If train_percentage or test_percentage are not between 0 and 1.
     """
+
+    _ensure_valid_pct(
+        train_percentage,
+        "Training percentage must be greater than 0 and less than 1.")
+
+    _ensure_valid_pct(
+        test_percentage,
+        "Test percentage must be greater than 0 and less than 1.")
+
     output_folders = [_create_output_folder(output_dir, folder_name)
                       for folder_name in [TRAIN_FOLDER, TEST_FOLDER, VAL_FOLDER]]
 
@@ -72,6 +83,11 @@ def create_train_test_validation_sets(
         _copy_files_to_output(output_folders[0], image_class_folder, train_files)
         _copy_files_to_output(output_folders[1], image_class_folder, test_files)
         _copy_files_to_output(output_folders[2], image_class_folder, validation_files)
+
+
+def _ensure_valid_pct(pct:float, msg:str):
+    if not 0 < pct < 1:
+        raise ValueError(msg)
 
 
 def _copy_files_to_output(
