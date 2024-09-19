@@ -3,51 +3,54 @@ import random
 import shutil
 from pathlib import Path
 
+TRAIN_FOLDER = "train"
+TEST_FOLDER = "test"
+VAL_FOLDER = "val"
+SHUFFLE_ROUNDS = 3
+
 
 def create_train_test_validation_sets(
-        input_dir:Path,
-        output_dir:Path,
-        filter,
-        train_pct:float,
-        test_pct:float) -> None:
+        input_dir: Path,
+        output_dir: Path,
+        file_filter,
+        train_percentage: float,
+        test_percentage: float) -> None:
+    output_folders = [_create_output_folder(output_dir, folder_name)
+                      for folder_name in [TRAIN_FOLDER, TEST_FOLDER, VAL_FOLDER]]
 
-    output_folders = [_create_output_folder(output_dir, f) for f
-                      in ["train", "test", "val"]]
+    image_class_folders = os.listdir(input_dir)
 
-    source_image_class_folders = os.listdir(input_dir)
+    image_class_output_folders = [
+        _create_image_class_output_folder(output_folder, image_class)
+        for output_folder in output_folders
+        for image_class in image_class_folders
+    ]
 
-    image_class_output_folders = [_create_image_class_output_folder(of, image_class)
-                                  for of in output_folders
-                                  for image_class in source_image_class_folders]
+    for source_image_class_folder in image_class_folders:
+        source_folder_path = os.path.join(input_dir, source_image_class_folder)
+        files = _get_files_from_folder(source_folder_path)
+        random.shuffle(files)
 
-    for source_image_class_folder in source_image_class_folders:
+        train_count = int(len(files) * train_percentage)
+        test_count = int(len(files) * test_percentage)
 
-        source_image_class_folder_full_path = os.path.join(
-            input_dir,
-            source_image_class_folder)
+        train_files = files[:train_count]
+        _copy_files(train_files, image_class_output_folders[0])
 
-        files =[os.path.join(source_image_class_folder_full_path, fn)
-                for fn in os.listdir(source_image_class_folder_full_path)]
+        test_files = files[train_count:train_count + test_count]
+        _copy_files(test_files, image_class_output_folders[1])
 
-        [random.shuffle(files) for _ in range(0, 3)]
+        validation_files = files[train_count + test_count:]
+        _copy_files(validation_files, image_class_output_folders[2])
 
-        file_count = len(files)
-        train_file_count = int(file_count * train_pct)
-        train_files = files[:train_file_count]
 
-        for file in train_files:
-            shutil.copy2(file, image_class_output_folders[0])
+def _get_files_from_folder(folder_path: str) -> list:
+    return [os.path.join(folder_path, filename) for filename in os.listdir(folder_path)]
 
-        test_file_count = int(file_count * test_pct)
-        test_files = files[train_file_count:train_file_count + test_file_count]
 
-        for file in test_files:
-            shutil.copy2(file, image_class_output_folders[1])
-
-        validation_files = files[train_file_count + test_file_count:]
-
-        for file in validation_files:
-            shutil.copy2(file, image_class_output_folders[2])
+def _copy_files(files: list, output_folder: str) -> None:
+    for file in files:
+        shutil.copy2(file, output_folder)
 
 def _create_output_folder(root_path:Path, folder_name:str) -> Path:
     output_path = os.path.join(root_path, folder_name)
