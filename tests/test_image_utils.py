@@ -35,8 +35,8 @@ class TestImageUtils(unittest.TestCase):
         assert os.path.exists(val_folder)
         assert os.path.exists(test_folder)
 
-        # train_file_count = list(train_folder.rglob(filter))
-        # assert len(train_file_count) == 14
+        train_file_count = list(train_folder.rglob(filter))
+        assert len(train_file_count) == 14
 
 
 
