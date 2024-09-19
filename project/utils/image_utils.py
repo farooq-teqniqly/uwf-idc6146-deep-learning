@@ -2,7 +2,7 @@ import os.path
 import random
 import shutil
 from pathlib import Path
-from typing import List
+from typing import List, Tuple
 
 TRAIN_FOLDER = "train"
 TEST_FOLDER = "test"
@@ -24,29 +24,24 @@ def create_train_test_validation_sets(
         files = _get_source_files(image_class_folder, input_dir)
         random.shuffle(files)
 
-        test_files, train_files, validation_files = _split_files(
+        train_files, test_files, validation_files = _split_files(
             files,
             test_percentage,
             train_percentage)
 
-        train_folder = _create_image_class_output_folder(
-            output_folders[0],
-            image_class_folder)
+        _copy_files_to_output(output_folders[0], image_class_folder, train_files)
+        _copy_files_to_output(output_folders[1], image_class_folder, test_files)
+        _copy_files_to_output(output_folders[2], image_class_folder, validation_files)
 
-        _copy_files(train_files, train_folder)
+def _copy_files_to_output(
+        output_folder:Path,
+        image_class_folder:str,
+        files:List[str]) -> None:
+    folder = _create_image_class_output_folder(
+        output_folder,
+        image_class_folder)
 
-        test_folder = _create_image_class_output_folder(
-            output_folders[1],
-            image_class_folder)
-
-        _copy_files(test_files, test_folder)
-
-        validation_folder = _create_image_class_output_folder(
-            output_folders[2],
-            image_class_folder)
-
-        _copy_files(validation_files, validation_folder)
-
+    _copy_files(files, folder)
 
 def _split_files(
         files:List[str],
@@ -59,7 +54,7 @@ def _split_files(
     test_files = files[train_count:train_count + test_count]
     validation_files = files[train_count + test_count:]
 
-    return test_files, train_files, validation_files
+    return train_files, test_files, validation_files
 
 
 def _get_source_files(image_class_folder:str, input_dir:Path) -> List[str]:
