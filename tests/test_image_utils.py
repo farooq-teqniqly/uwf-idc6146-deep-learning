@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from parameterized import parameterized
 
-from project.utils.image_utils import create_train_test_validation_sets
+from project.utils.image_utils import split_and_organize_images
 
 JPEG_FILTER = "*.jpeg"
 
@@ -38,7 +38,7 @@ class TestImageUtils(unittest.TestCase):
             expected_validation_file_count):
         self.create_output_dir_if_not_exists()
 
-        create_train_test_validation_sets(self._input_dir, self._output_dir)
+        split_and_organize_images(self._input_dir, self._output_dir)
 
         train_folder = Path(os.path.join(self._output_dir, "train", image_class))
         test_folder = Path(os.path.join(self._output_dir, "test", image_class))
@@ -54,7 +54,7 @@ class TestImageUtils(unittest.TestCase):
             train_pct):
 
         with pytest.raises(ValueError):
-            create_train_test_validation_sets(
+            split_and_organize_images(
                 self._input_dir,
                 self._output_dir,
                 train_percentage=train_pct)
@@ -65,7 +65,7 @@ class TestImageUtils(unittest.TestCase):
             test_pct):
 
         with pytest.raises(ValueError):
-            create_train_test_validation_sets(
+            split_and_organize_images(
                 self._input_dir,
                 self._output_dir,
                 test_percentage=test_pct)
@@ -76,7 +76,7 @@ class TestImageUtils(unittest.TestCase):
     ])
     def test_train_test_pct_should_be_less_than_1(self, train_pct, test_pct):
         with pytest.raises(ValueError):
-            create_train_test_validation_sets(
+            split_and_organize_images(
                 self._input_dir,
                 self._output_dir,
                 train_percentage=train_pct,

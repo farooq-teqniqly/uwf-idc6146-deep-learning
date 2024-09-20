@@ -31,7 +31,7 @@ VAL_FOLDER = "val"
 SHUFFLE_ROUNDS = 3
 
 
-def create_train_test_validation_sets(
+def split_and_organize_images(
         input_dir: Path,
         output_dir: Path,
         file_filter="*.jpeg",
