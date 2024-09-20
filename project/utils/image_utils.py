@@ -24,6 +24,7 @@ import random
 import shutil
 from pathlib import Path
 from typing import List, Tuple
+from concurrent.futures import ThreadPoolExecutor
 
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 
@@ -38,48 +39,53 @@ def split_and_organize_images(
         output_dir: Path,
         file_filter="*.jpeg",
         train_percentage: float = 0.7,
-        test_percentage: float = 0.2) -> None:
+        test_percentage: float = 0.2,
+        max_workers:int=1) -> None:
     """
-        Splits and copies files from an input directory into train, test, and
-        validation sets  based on given percentages, and stores them in an output
-        directory.
+    Splits and copies files from an input directory into train, test, and
+    validation sets based on given percentages, and stores them in an output
+    directory.
 
-        Parameters:
-        input_dir (Path): Path to the input directory containing class sub-folders with
-        files.
-        output_dir (Path): Path to the output directory where train, test, and
-        validation sub-folders will be created.
-        file_filter (str): Glob pattern to filter files in the input directory.
-        Default is "*.jpeg".
-        train_percentage (float): Percentage of files to be used for training.
-        Default is 0.7.
-        test_percentage (float): Percentage of files to be used for testing.
-        Default is 0.2.
+    Parameters:
+    input_dir (Path): Path to the input directory containing class sub-folders with files.
+    output_dir (Path): Path to the output directory where train, test, and
+    validation sub-folders will be created.
+    file_filter (str): Glob pattern to filter files in the input directory.
+    Default is "*.jpeg".
+    train_percentage (float): Percentage of files to be used for training.
+    Default is 0.7.
+    test_percentage (float): Percentage of files to be used for testing.
+    Default is 0.2.
+    max_workers (int): Number of worker threads to use. Default is 1.
 
-        Raises:
-        ValueError: If train_percentage or test_percentage == 0 or 1
-        ValueError: If train_percentage + test_percentage is >= 1
+    Raises:
+    ValueError: If train_percentage or test_percentage == 0 or 1
+    ValueError: If train_percentage + test_percentage is >= 1
     """
-
     _ensure_valid_percentages(train_percentage, test_percentage)
+
+    if max_workers < 1:
+        raise ValueError("max_workers must be greater than or equal to 1.")
 
     output_folders = [_create_output_folder(output_dir, folder_name)
                       for folder_name in [TRAIN_FOLDER, TEST_FOLDER, VAL_FOLDER]]
 
     image_class_folders = os.listdir(input_dir)
 
-    for image_class_folder in image_class_folders:
+    def process_folder(image_class_folder: str) -> None:
         files = _get_source_files(image_class_folder, input_dir)
         random.shuffle(files)
 
         train_files, test_files, validation_files = _split_files(
-            files,
-            test_percentage,
-            train_percentage)
+            files, test_percentage, train_percentage)
 
         _copy_files_to_output(output_folders[0], image_class_folder, train_files)
         _copy_files_to_output(output_folders[1], image_class_folder, test_files)
         _copy_files_to_output(output_folders[2], image_class_folder, validation_files)
+
+    with ThreadPoolExecutor(max_workers=max_workers) as executor:
+        executor.map(process_folder, image_class_folders)
+
 
 def create_data_set_from_images(
         input_dir: Path,

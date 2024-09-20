@@ -70,6 +70,14 @@ class TestImageUtils(unittest.TestCase):
                 self._output_dir,
                 test_percentage=test_pct)
 
+    @parameterized.expand([0, -1])
+    def test_invalid_worker_raises_error(self, max_workers):
+        with pytest.raises(ValueError):
+            split_and_organize_images(
+                self._input_dir,
+                self._output_dir,
+                max_workers=max_workers)
+
     @parameterized.expand([
         (0.7, 0.3),
         (0.6, 0.5),
