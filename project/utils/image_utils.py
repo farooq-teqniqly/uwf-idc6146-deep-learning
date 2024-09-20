@@ -25,6 +25,8 @@ import shutil
 from pathlib import Path
 from typing import List, Tuple
 
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+
 TRAIN_FOLDER = "train"
 TEST_FOLDER = "test"
 VAL_FOLDER = "val"
@@ -78,6 +80,39 @@ def split_and_organize_images(
         _copy_files_to_output(output_folders[0], image_class_folder, train_files)
         _copy_files_to_output(output_folders[1], image_class_folder, test_files)
         _copy_files_to_output(output_folders[2], image_class_folder, validation_files)
+
+def create_data_set_from_images(
+        input_dir: Path,
+        target_size: Tuple[int, int]=(224,224),
+        batch_size:int=32,
+        class_mode:str="binary"):
+    """
+        Generates batches of tensor image data from the images in the specified
+        directory, with real-time data augmentation.
+
+        Parameters:
+        input_dir (Path): Path to the directory containing the images.
+        target_size (Tuple[int, int], optional): Tuple specifying the target size of
+        the images after resizing. Defaults to (224, 224).
+        batch_size (int, optional): Number of images to be yielded from the generator
+        per batch. Defaults to 32.
+        class_mode (str, optional): Mode for yielding the targets. Defaults to "binary".
+
+        Returns:
+        DirectoryIterator: An instance of DirectoryIterator yielding tuples of
+        (image_batch, label_batch).
+    """
+    image_data_gen = ImageDataGenerator(
+        rescale=1. / 255,
+        shear_range=0.2,
+        zoom_range=0.2,
+        horizontal_flip=True)
+
+    return image_data_gen.flow_from_directory(
+        input_dir,
+        target_size=target_size,
+        batch_size=batch_size,
+        class_mode=class_mode)
 
 
 def _ensure_valid_percentages(train_percentage:float, test_percentage:float):
