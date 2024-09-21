@@ -91,7 +91,7 @@ def create_data_set_from_images(
         input_dir: Path,
         target_size: Tuple[int, int]=(224,224),
         batch_size:int=32,
-        class_mode:str="binary"):
+        class_mode:str="categorical"):
     """
         Generates batches of tensor image data from the images in the specified
         directory, with real-time data augmentation.
