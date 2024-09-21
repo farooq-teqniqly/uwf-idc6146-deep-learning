@@ -169,3 +169,5 @@ pyvenv.cfg
 etc/
 share/
 .vs/
+out/
+auxil/
