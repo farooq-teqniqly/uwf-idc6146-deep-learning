@@ -211,11 +211,11 @@ def main():
             f"{args.size[0]}x{args.size[1]}.")
 
         process_images(
-            args.input_dir,
-            args.output_dir,
+            Path(args.input_dir),
+            Path(args.output_dir),
             tuple(args.size),
-            args.workers,
-            logger)
+            logger,
+            args.workers)
 
         logger.info("Image resizing process completed.")
     except Exception:
