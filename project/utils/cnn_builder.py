@@ -1,5 +1,6 @@
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPool2D, Flatten, Dense, Dropout
+from tensorflow.keras.metrics import Precision, Recall
 from typing import Tuple, List
 
 class CNNBuilder:
@@ -61,6 +62,6 @@ class CNNBuilder:
         self._model.compile(
             optimizer='adam',
             loss='binary_crossentropy',
-            metrics=['accuracy'])
+            metrics=["accuracy", Precision(name="precision"), Recall(name="recall")])
 
         return self._model
