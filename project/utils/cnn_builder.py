@@ -51,6 +51,9 @@ class CNNBuilder:
     def add_dropout(self, rate:float):
          self._model.add(Dropout(rate))
 
+    def add_full_connection(self, units:int=128, activation:str="relu"):
+        self._model.add(Dense(units=units, activation=activation))
+
     def add_output_layer(self, num_classes:int, activation:str="relu"):
         self._model.add(Dense(units=num_classes, activation=activation))
 
