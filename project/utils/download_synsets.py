@@ -85,7 +85,7 @@ async def download_and_rename_tar(session, synset_id, cifar_class_name, download
     - Logs progress and any errors encountered during the download and renaming process.
     """
     tar_url = f"{ROOT_URL}{synset_id}.tar"
-    renamed_tar_filename = f"{synset_id}-{cifar_class_name}.tar"
+    renamed_tar_filename = f"{cifar_class_name}.tar"
     renamed_tar_file_path = os.path.join(download_dir, renamed_tar_filename)
 
     if os.path.exists(renamed_tar_file_path):
