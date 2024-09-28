@@ -111,7 +111,7 @@ These constraints were the reason why the filter depths range from 32 to 256.
     \label{fig:cnn-simple}
 \end{figure}
 
-This simple model, when trained for 30 epochs, achieved a maximum accuracy of 55.8\% at Epoch 29 as shown in Figure \ref{fig:googlenet-simple-accuracy}.
+This simple model, when trained for 30 epochs, achieved a maximum accuracy of 57.2\% at Epoch 23 as shown in Figure \ref{fig:googlenet-simple-accuracy}.
 
 The validation accuracy and training accuracy track well, indicating a lack of overfitting. Applying data augmentation to the training set mitigates overfitting, especially with the smaller dataset. The augmentation code is shown in Listing \ref{lst:augmentation}
 
@@ -158,25 +158,66 @@ The GoogLeNet architecture is explained in tabular form in Table 1 in the Szeged
 \end{figure}
 
 \subsection{Model Evaluation}
-Both networks were evaluated using two sets of images. The first is the 1,000 ImageNet images set aside prior to model training. The second set is sourced from the CIFAR-10 dataset. The CIFAR-10 dataset contains 1,000 32x32 RGB images.
+Both networks were evaluated using two sets of images. The first is the 1,000 ImageNet images set aside prior to model training. The second set is sourced from the CIFAR-10 dataset\cite{kim_cifar10_images}. The CIFAR-10 dataset contains 1,000 32x32 RGB images.
 
 \subsubsection{Performance On Unseen Imagenet Images}
+100 images from each class was set aside in order to evaluate the performance of the two models on unseen images. The accuracy of the two models is shown in \ref{tab:perf-unseen-imagenet}.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{ll}
+    \hline
+    \textbf{Model} & \textbf{Accuracy} \\ \hline
+    Simple & 58.1\% \\ \hline
+    GoogLeNet Reproduction & ??? \\ \hline
+    \end{tabular}
+    \caption{Models' performance on unseen ImageNet images}
+    \label{tab:perf-unseen-imagenet}
+\end{table}
+
+The simpler model's accuracy of 58.1\% on the test set is slightly better than the training accuracy of 57.2\%. This indicates that the model generalizes well and did not merely memorize the training images. In machine learning, when a model performs well on unseen data compared to the training data, it suggests that the model has learned useful patterns that extend beyond the specific examples in the training set.
+
+Furthermore, the relatively small difference in training accuracy and evaluation accuracy indicates that the model has managed to avoid overfitting. Overfitting typically results in high training accuracy but significantly lower evaluation accuracy. The fact that the model's test accuracy is slightly higher than its training accuracy can be attributed to augmentation done on the training set but not the evaluation set.
+
+On the other hand, the 58.1\% accuracy also indicates that there is room for improvement, suggesting that the model might benefit from more complexity or further tuning.
+
+
 
 \subsubsection{Performance On CIFAR-10 Images}
+The CIFAR-10 dataset consists of 1,000 32x32 RGB images (100 images per class). The accuracy of the two models against the unseen CIFAR-10 images is shown in \ref{tab:perf-unseen-imagenet}.
+
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{ll}
+    \hline
+    \textbf{Model} & \textbf{Accuracy} \\ \hline
+    Simple & 21.4\% \\ \hline
+    GoogLeNet Reproduction & ??? \\ \hline
+    \end{tabular}
+    \caption{Models' performance on unseen CIFAR-10 images}
+    \label{tab:perf-unseen-imagenet}
+\end{table}
+
+The low accuracy of 21.4\% achieved by the simple model could be for several reasons. First, the models were trained on images having a relatively high resolution compared to CIFAR-10's 32x32 images. When models are trained on larger images, the models learn to identify fine-grained details which can become indistinguishable when downscaled to much smaller dimensions~\cite{simonyan2015vgg}.
+
+Additionally, the convolutional filters in the models are likely too large for the small CIFAR-10 images, causing the network to miss out on important features. In a 32x32 image, for instance, using large filter sizes or pooling layers can result in excessive downsampling, leading to a significant loss of spatial information, which ultimately hampers the model's ability to classify the images accurately.
+
+Finally, CIFAR-10, like ImageNet, contains complex image classes, which are often difficult to distinguish at such a low resolution. The limited information provided by 32x32 images presents additional challenges for models trained on high-resolution images, as they may rely on more detailed textures and edges, which are not as pronounced in low-resolution images~\cite{krizhevsky2012imagenet}.
+
 
 \subsection{Challenges}
 The Inception architecture's key contribution is its ability to balance computational efficiency with accuracy. By incorporating 1x1 convolutions for dimensionality reduction and parallel convolutions in the Inception modules, GoogLeNet achieves leading performance without increased compute cost or model parameters.
 
 In our reproduction, the model's performance on the ImageNet dataset was not  close to the results reported in the original paper. This is not an indictment on the effectiveness of the architecture, however. Rather, the small dataset size could be a factor. Additionally, our interpretation of the Inception modules to code could have variations from the code used by Szegedy et al.
 
-One of the challenges we encountered was the high computational demand of training, event on the subset of ImageNet images we used. Although GoogLeNet is more efficient than many of its contemporaries, training still required GPU resources. We used data augmentation techniques, such as random cropping, random horizontal flipping, and random zoom to avoid overfitting. We also needed to reduce the learning rate to 0.0001 and reduce batch size to 16 so as not to overwhelm the GPU. The training performance is summarized in Table \ref{tab:training_times}
+One of the challenges we encountered was the high computational demand of training, event on the subset of ImageNet images we used. Although GoogLeNet is more efficient than many of its contemporaries, training still required GPU resources. We used data augmentation techniques, such as random cropping, random horizontal flipping, and random zoom to avoid overfitting. We also needed to reduce the learning rate to 0.0001, reduced batch size to 16, and enabled memory growth\cite{tensorflow_memory_growth} so as not to overwhelm the GPU. Prefetching was also implemented to improve performance\cite{tensorflow_data_performance}. The training performance is summarized in Table \ref{tab:training_times}
 
 \begin{table}[ht]
     \centering
     \begin{tabular}{llll}
     \hline
     \textbf{Model} & \textbf{Batch size} & \textbf{Epochs} & \textbf{Training time (minutes)} \\  \hline
-    Simple & 16 & 30 & ?? \\ \hline
+    Simple & 16 & 30 & 73 \\ \hline
     Complex & 16 & 30 & 69 \\ \hline
     \end{tabular}
     \caption{Training times}
