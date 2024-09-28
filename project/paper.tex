@@ -26,7 +26,7 @@
     Group Members: \\
     Farooq Mahmud
 }
-\date{September 20, 2024}
+\date{September 28, 2024}
 
 \begin{document}
 
@@ -35,7 +35,7 @@
 \section{Introduction}
 Deep learning models, particularly Convolutional Neural Networks, have made great strides in solving complex computer vision tasks such as image classification. Among the key advancements in this area is the Inception architecture, introduced by Szegedy et al. (2015) in the paper "Going Deeper with Convolutions." This architecture was designed to balance computational efficiency with improved classification accuracy. This architecture achieved winning results in the ImageNet Large-Scale Visual Recognition Challenge (ILSVRC) in 2014. The primary innovation of the Inception architecture is its use of multi-scale feature extraction and dimensionality reduction, which allows it to increase network depth and width without excessive computational overhead\cite{szegedy2015going}.
 
-This paper aims to replicate the results presented by Szegedy et al., critically assess the impact of the Inception architecture, and test its performance on an alternative dataset. We attempt to reproduce the GoogLeNet model by writing our own Python implementation using the Tensorflow library. Our implementation is evaluated on both a subset of the ImageNet dataset and a secondary dataset, CIFAR-10, to assess its generalization capability. Through this replication and exploration, we seek to validate the core contributions of the Inception model, gain a deeper undertanding of convolutional neural networks, and an appreciation of the associated challenges.
+This paper aims to replicate the results presented by Szegedy et al., critically assess the impact of the Inception architecture, and test its performance on an alternative dataset. We attempt to reproduce the GoogLeNet model by writing our own Python implementation using the Tensorflow library. Our implementation is evaluated on both a subset of the ImageNet dataset and a secondary dataset, CIFAR-10, to assess its generalization capability. Through this replication and exploration, we seek to validate the core contributions of the Inception model, gain a deeper understanding of convolutional neural networks, and an appreciation of the associated challenges.
 
 
 \section{Background}
@@ -45,7 +45,7 @@ GoogLeNet introduced a novel approach to convolutional neural networks by stacki
 The Inception module aims to mitigate computational costs by including 1x1 convolutions for dimensionality reduction before performing the larger convolution operations. This was one of the key innovations that made GoogLeNet both efficient and powerful, despite being deeper than previous CNN architectures such as AlexNet and VGGNet~\cite{krizhevsky2012imagenet, simonyan2015vgg}.
 
 \subsubsection{Inception Architecture}
-The Inception architecture was introduced to address two primary challenges in CNNs: improving model accuracy while maintaining computational efficiency. Szegedy et al. proposed a novel structure called the Inception module, which incorporates parallel convolutional filters of different sizes (1x1, 3x3, and 5x5) along with max-pooling. The key advantage of this approach is that it allows the network to capture features at multiple scales simultaneously, enhancing the model's ability to learn complex spatial hierarchies within images.
+The Inception architecture was introduced to address the primary challenge in convolutional neural networks- improving model accuracy while maintaining computational efficiency. Szegedy et al. proposed a novel structure called the Inception module, which incorporates parallel convolutional filters of different sizes (1x1, 3x3, and 5x5) along with max-pooling. The key advantage of this approach is that it allows the network to capture features at multiple scales simultaneously, enhancing the model's ability to learn complex spatial hierarchies within images.
 
 Another major innovation was the use of 1x1 convolutions for dimensionality reduction. By applying 1x1 filters before 3x3 and 5x5 convolutions, the Inception module significantly reduces the number of parameters and computational cost without sacrificing accuracy. This strategy enables the network to be deeper and wider without a substantial increase in computational complexity.
 
@@ -62,7 +62,7 @@ The Inception architecture was implemented in a 22-layer deep network, GoogLeNet
 \section{Methodology}
 
 \subsection{Image Selection}
-The Imagenet dataset contains over 1 million images with a size of over 1TB. Processing this amount of data would not be practical given the available coumputing power. In order to make processing possible in a reasonable timeframe, a subset of the Imagenet images was downloaded. The subsets, or \textit{synsets} map to the CIFAR-10 image classes as shown in Table \ref{tab:synsets}.
+The ImageNet dataset contains over 1 million images with a size of over 1TB. Processing this amount of data would not be practical given the available computing power. In order to make processing possible in a reasonable time frame, a subset of the ImageNet images was downloaded. The subsets, or \textit{synsets} map to the CIFAR-10 image classes as shown in Table \ref{tab:synsets}.
 
 \begin{table}[ht]
     \centering
@@ -80,11 +80,11 @@ The Imagenet dataset contains over 1 million images with a size of over 1TB. Pro
     n04194289 & ship \\ \hline
     n04467665 & truck \\ \hline
     \end{tabular}
-    \caption{Imagenet synset to CIFAR-10 class mapping}
+    \caption{Mapping ImageNet synsets to CIFAR-10 classes}
     \label{tab:synsets}
 \end{table}
 
-The resulting download consists of 14,738 files with a total size of 1.3GB. Scaling the images to 224 x 224 pixels, the dimensions used by Szegedy, et. al. decreased the size to a manageable 137MB.
+The resulting download consists of 14,738 files with a total size of 1.3GB. Scaling the images to 224 x 224 pixels, the dimensions used by Szegedy, et al. decreased the size to a manageable 137MB.
 
 After scaling, 100 images from each class were set aside to use for evaluating the trained model.
 
@@ -93,7 +93,8 @@ Training and validation sets were created in-situ using Tensorflow's \textt{imag
 The networks mentioned in this report were training on an NVIDIA Quadro P2000 GPU having 5GB of dedicated memory.
 
 \subsection{A Simplified GoogLeNet Network}
-Before constructing a complex model like GoogLeNet, it is a good idea to use a simple network as a baseline. This network is shown in Figure \ref{fig:cnn-simple}. This network is conceptually similar to GoogLeNet but without the complexity of the Inception modules. At it's core, the GoogLeNet architecture stacks multiple convolutional layers before downsampling through pooling. Stacking multiple layers helps networks capture progressively more complex features, improves generalization, and increases performance while keeping computational cost from getting out of hand. This is a common design pattern in many successful image classification networks\cite{simonyan2014very}.
+\label{subsec:simple_model}
+Before constructing a complex model like GoogLeNet, it is a good idea to use a simple network as a baseline. This network is shown in Figure \ref{fig:cnn-simple}. This network is conceptually similar to GoogLeNet but without the complexity of the Inception modules. At it's core, the GoogLeNet architecture stacks multiple convolutional layers before down sampling through pooling. Stacking multiple layers helps networks capture progressively more complex features, improves generalization, and increases performance while keeping computational cost from getting out of hand. This is a common design pattern in many successful image classification networks\cite{simonyan2014very}.
 
 The architecture of this network was informed by the following constraints:
 \begin{itemize}
@@ -113,19 +114,7 @@ These constraints were the reason why the filter depths range from 32 to 256.
 
 This simple model, when trained for 30 epochs, achieved a maximum accuracy of 57.2\% at Epoch 23 as shown in Figure \ref{fig:googlenet-simple-accuracy}.
 
-The validation accuracy and training accuracy track well, indicating a lack of overfitting. Applying data augmentation to the training set mitigates overfitting, especially with the smaller dataset. The augmentation code is shown in Listing \ref{lst:augmentation}
-
-\begin{lstlisting}[caption={Augmentation code}, label={lst:augmentation}]
-augmentation = tf.keras.Sequential([
-    layers.RandomFlip("horizontal"),
-    layers.RandomRotation(0.1),
-    layers.RandomZoom(0.2),
-])
-
-# Apply the augmentation only on the training dataset
-train_dataset = train_dataset.map(lambda x, y: (augmentation(x, training=True), y))
-\end{lstlisting}
-
+The validation accuracy and training accuracy track well, indicating a lack of overfitting. Applying data augmentation to the training set mitigates overfitting, especially with the smaller dataset.
 \begin{figure}[ht]
     \centering
     \includegraphics[scale=0.7]{project/paper_images/googlenet_simple_accuracy.png}
@@ -134,7 +123,9 @@ train_dataset = train_dataset.map(lambda x, y: (augmentation(x, training=True), 
 \end{figure}
 
 \subsection{Replicating the GoogLeNet Network}
-The GoogLeNet architecture is explained in tabular form in Table 1 in the Szegedy paper and is reproduced in Figure \ref{fig:googlenet-arch}. The introduction of Inception layers having parallel convolutional filters is the primary difference from typical sequential networks. The replication attempt, when trained for 30 epochs, achieved a maximum accuracy of 56.9\%. This is essentialy the same as the simple network. The upshot is that it only took 8 epochs to arrive at the maximum accuracy as shown in Figure \ref{fig:googlenet-complex-accuracy}. Nevertheless, both models are nowhere near the accuracy of the model in the Szegedy paper. Their model achieved a top-5 error rate of only 6.7\%. While the paper does not mention the accuracy, it is not a leap to assume that the accuracy was well above the accuracy in the replication attempt. The network is graphically depicted in Figure \ref{fig:googlenet-complex}
+The GoogLeNet architecture is explained in Table 1 of the Szegedy paper is reproduced in Figure \ref{fig:googlenet-arch}. The introduction of Inception layers having parallel convolutional filters is the primary difference from typical sequential networks. The replication attempt, when trained for 30 epochs, achieved a maximum accuracy of 60.3\%. This is quite improved over the simple model. The other impressive aspect is that it only took 14 epochs to arrive at the maximum accuracy as shown in Figure \ref{fig:googlenet-complex-accuracy}. The conclusion is that the architecture does provide marked improvements over the simpler, more naive model described in \ref{subsec:simple_model}.
+
+Nevertheless, this model is nowhere near the accuracy of the model in the Szegedy paper. Their model achieved a top-5 error rate of only 6.7\%. While the paper does not mention the accuracy, it is not a leap to assume that the accuracy was well above the accuracy in the replication attempt. We are optimistic, however, that our implementation is sound and that with a larger dataset, the accuracy can be improved and approach the accuracy achieved by Szegedy et. al. The network is graphically depicted in Figure \ref{fig:googlenet-complex}
 
 \begin{figure}[ht]
     \centering
@@ -146,7 +137,7 @@ The GoogLeNet architecture is explained in tabular form in Table 1 in the Szeged
 \begin{figure}[ht]
     \centering
     \includegraphics[scale=0.7]{project/paper_images/googlenet_complex_accuracy.png}
-    \caption{Accuracy of the simplified version of the GoogLeNet network}
+    \caption{Accuracy of GoogLeNet network reproduction}
     \label{fig:googlenet-complex-accuracy}
 \end{figure}
 
@@ -160,7 +151,7 @@ The GoogLeNet architecture is explained in tabular form in Table 1 in the Szeged
 \subsection{Model Evaluation}
 Both networks were evaluated using two sets of images. The first is the 1,000 ImageNet images set aside prior to model training. The second set is sourced from the CIFAR-10 dataset\cite{kim_cifar10_images}. The CIFAR-10 dataset contains 1,000 32x32 RGB images.
 
-\subsubsection{Performance On Unseen Imagenet Images}
+\subsubsection{Performance On Unseen ImageNet Images}
 100 images from each class was set aside in order to evaluate the performance of the two models on unseen images. The accuracy of the two models is shown in \ref{tab:perf-unseen-imagenet}.
 
 \begin{table}[ht]
@@ -169,7 +160,7 @@ Both networks were evaluated using two sets of images. The first is the 1,000 Im
     \hline
     \textbf{Model} & \textbf{Accuracy} \\ \hline
     Simple & 58.1\% \\ \hline
-    GoogLeNet Reproduction & ??? \\ \hline
+    GoogLeNet Reproduction & 66.2\% \\ \hline
     \end{tabular}
     \caption{Models' performance on unseen ImageNet images}
     \label{tab:perf-unseen-imagenet}
@@ -180,6 +171,8 @@ The simpler model's accuracy of 58.1\% on the test set is slightly better than t
 Furthermore, the relatively small difference in training accuracy and evaluation accuracy indicates that the model has managed to avoid overfitting. Overfitting typically results in high training accuracy but significantly lower evaluation accuracy. The fact that the model's test accuracy is slightly higher than its training accuracy can be attributed to augmentation done on the training set but not the evaluation set.
 
 On the other hand, the 58.1\% accuracy also indicates that there is room for improvement, suggesting that the model might benefit from more complexity or further tuning.
+
+The GoogLeNet reproduction resulted in a 66.2\% accuracy on unseen ImageNet images. The higher accuracy of this model can be attributed to the same reasons as the simpler model. In this case, additional complexity did provide a marked increase in accuracy. There is cause for optimism that a result closer to what was achieved by Szegedy, et al. could be matched with a larger training set.
 
 
 
@@ -198,11 +191,13 @@ The CIFAR-10 dataset consists of 1,000 32x32 RGB images (100 images per class). 
     \label{tab:perf-unseen-imagenet}
 \end{table}
 
-The low accuracy of 21.4\% achieved by the simple model could be for several reasons. First, the models were trained on images having a relatively high resolution compared to CIFAR-10's 32x32 images. When models are trained on larger images, the models learn to identify fine-grained details which can become indistinguishable when downscaled to much smaller dimensions~\cite{simonyan2015vgg}.
+The low accuracy of 21.4\% achieved by the simple model could be for several reasons. First, the models were trained on images having a relatively high resolution compared to CIFAR-10's 32x32 images. When models are trained on larger images, the models learn to identify fine-grained details which can become indistinguishable when down scaled to much smaller dimensions~\cite{simonyan2015vgg}.
 
-Additionally, the convolutional filters in the models are likely too large for the small CIFAR-10 images, causing the network to miss out on important features. In a 32x32 image, for instance, using large filter sizes or pooling layers can result in excessive downsampling, leading to a significant loss of spatial information, which ultimately hampers the model's ability to classify the images accurately.
+Additionally, the convolutional filters in the models are likely too large for the small CIFAR-10 images, causing the network to miss out on important features. In a 32x32 image, for instance, using large filter sizes or pooling layers can result in excessive down sampling, leading to a significant loss of spatial information, which ultimately hampers the model's ability to classify the images accurately.
 
-Finally, CIFAR-10, like ImageNet, contains complex image classes, which are often difficult to distinguish at such a low resolution. The limited information provided by 32x32 images presents additional challenges for models trained on high-resolution images, as they may rely on more detailed textures and edges, which are not as pronounced in low-resolution images~\cite{krizhevsky2012imagenet}.
+CIFAR-10, like ImageNet, contains complex image classes, which are often difficult to distinguish at such a low resolution. The limited information provided by 32x32 images presents additional challenges for models trained on high-resolution images, as they may rely on more detailed textures and edges, which are not as pronounced in low-resolution images~\cite{krizhevsky2012imagenet}.
+
+Finally, Tensorflow up scales the images to 224 x 224 which surely results in a tremendous loss of fidelity. The fact that the accuracy is not lower is impressive when considering this loss of fidelity.
 
 
 \subsection{Challenges}
@@ -210,15 +205,15 @@ The Inception architecture's key contribution is its ability to balance computat
 
 In our reproduction, the model's performance on the ImageNet dataset was not  close to the results reported in the original paper. This is not an indictment on the effectiveness of the architecture, however. Rather, the small dataset size could be a factor. Additionally, our interpretation of the Inception modules to code could have variations from the code used by Szegedy et al.
 
-One of the challenges we encountered was the high computational demand of training, event on the subset of ImageNet images we used. Although GoogLeNet is more efficient than many of its contemporaries, training still required GPU resources. We used data augmentation techniques, such as random cropping, random horizontal flipping, and random zoom to avoid overfitting. We also needed to reduce the learning rate to 0.0001, reduced batch size to 16, and enabled memory growth\cite{tensorflow_memory_growth} so as not to overwhelm the GPU. Prefetching was also implemented to improve performance\cite{tensorflow_data_performance}. The training performance is summarized in Table \ref{tab:training_times}
+One of the challenges we encountered was the high computational demand of training, event on the subset of ImageNet images we used. Although GoogLeNet is more efficient than many of its contemporaries, training still required GPU resources. We used data augmentation techniques, such as random cropping, random horizontal flipping, and random zoom to avoid overfitting\cite{dishasai_multiclass_classification}. We also needed to reduce the learning rate to 0.0001, reduced batch size to 16, and enabled memory growth\cite{tensorflow_memory_growth} so as not to overwhelm the GPU. Prefetching was also implemented to improve performance\cite{tensorflow_data_performance}. The training performance is summarized in Table \ref{tab:training_times}. From the training times, it should be readily apparent why a subset of the ImageNet images were chosen and that training the whole dataset would take an inordinate amount of time with the compute resources we had access to.
 
 \begin{table}[ht]
     \centering
     \begin{tabular}{llll}
     \hline
     \textbf{Model} & \textbf{Batch size} & \textbf{Epochs} & \textbf{Training time (minutes)} \\  \hline
-    Simple & 16 & 30 & 73 \\ \hline
-    Complex & 16 & 30 & 69 \\ \hline
+    Simple & 16 & 30 & 58 \\ \hline
+    Complex & 16 & 30 & 64 \\ \hline
     \end{tabular}
     \caption{Training times}
     \label{tab:training_times}
