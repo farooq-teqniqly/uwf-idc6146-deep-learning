@@ -171,3 +171,5 @@ share/
 .vs/
 out/
 auxil/
+*.jpg
+*.jpeg
