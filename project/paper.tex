@@ -88,7 +88,7 @@ The resulting download consists of 14,738 files with a total size of 1.3GB. Scal
 
 After scaling, 100 images from each class were set aside to use for evaluating the trained model.
 
-Training and validation sets were created in-situ using Tensorflow's \textt{image\_dataset\_from\_directory} function. The percentages were 80\% for training, and 20\% for validation.
+Training and validation sets were created in-situ using Tensorflow's \text{image\_dataset\_from\_directory} function. The percentages were 80\% for training, and 20\% for validation.
 
 The networks mentioned in this report were training on an NVIDIA Quadro P2000 GPU having 5GB of dedicated memory.
 
@@ -177,7 +177,7 @@ The GoogLeNet reproduction resulted in a 66.2\% accuracy on unseen ImageNet imag
 
 
 \subsubsection{Performance On CIFAR-10 Images}
-The CIFAR-10 dataset consists of 1,000 32x32 RGB images (100 images per class). The accuracy of the two models against the unseen CIFAR-10 images is shown in \ref{tab:perf-unseen-imagenet}.
+The CIFAR-10 dataset consists of 1,000 32x32 RGB images (100 images per class). The accuracy of the two models against the unseen CIFAR-10 images is shown in Table \ref{tab:perf-cifar10}.
 
 \begin{table}[ht]
     \centering
@@ -185,13 +185,13 @@ The CIFAR-10 dataset consists of 1,000 32x32 RGB images (100 images per class). 
     \hline
     \textbf{Model} & \textbf{Accuracy} \\ \hline
     Simple & 21.4\% \\ \hline
-    GoogLeNet Reproduction & ??? \\ \hline
+    GoogLeNet Reproduction & 22.6\% \\ \hline
     \end{tabular}
     \caption{Models' performance on unseen CIFAR-10 images}
-    \label{tab:perf-unseen-imagenet}
+    \label{tab:perf-cifar10}
 \end{table}
 
-The low accuracy of 21.4\% achieved by the simple model could be for several reasons. First, the models were trained on images having a relatively high resolution compared to CIFAR-10's 32x32 images. When models are trained on larger images, the models learn to identify fine-grained details which can become indistinguishable when down scaled to much smaller dimensions~\cite{simonyan2015vgg}.
+The low accuracy of both models could be for several reasons. First, the models were trained on images having a relatively high resolution compared to CIFAR-10's 32x32 images. When models are trained on larger images, the models learn to identify fine-grained details which can become indistinguishable when down scaled to much smaller dimensions~\cite{simonyan2015vgg}.
 
 Additionally, the convolutional filters in the models are likely too large for the small CIFAR-10 images, causing the network to miss out on important features. In a 32x32 image, for instance, using large filter sizes or pooling layers can result in excessive down sampling, leading to a significant loss of spatial information, which ultimately hampers the model's ability to classify the images accurately.
 
