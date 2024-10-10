@@ -38,11 +38,13 @@ Deep learning models, particularly Convolutional Neural Networks, have made grea
 
 This paper aims to replicate the results presented by Szegedy et al., critically assess the impact of the Inception architecture, and test its performance on an alternative dataset. We attempt to reproduce the GoogLeNet model by writing our own Python implementation using the Tensorflow library. Our implementation is evaluated on both a subset of the ImageNet dataset and a secondary dataset, CIFAR-10, to assess its generalization capability. Through this replication and exploration, we seek to validate the core contributions of the Inception model, gain a deeper understanding of convolutional neural networks, and an appreciation of the associated challenges.
 
+\textcolor{red}{
 \section {Motivation}
-Attempting to reproduce the experiment from the Szegedy paper is primarily motivated by the desire to apply TensorFlow to a practical problem, such as image classification, using a realistic dataset. Recognizing that the operational environment would be constrained (i.e., running the reproduction on a desktop PC), we also saw this as an opportunity to evaluate the network's performance on a smaller version of the ImageNet dataset. This project allowed us to directly experience the challenges of training a neural network. Additionally, it provided valuable experience in writing TensorFlow code for a complex neural network with branching and joining structures, whereas our prior work has been limited to simpler, sequential networks.
+The primary motivation for attempting to reproduce the experiment from the Szegedy paper was to apply TensorFlow to a practical problem, such as image classification, using a realistic dataset. The detailed documentation of the network in the Szegedy paper greatly facilitated its TensorFlow implementation. Recognizing that the operational environment would be constrained (i.e., running the reproduction on a desktop PC), we also saw this as an opportunity to evaluate the network's performance on a smaller version of the ImageNet dataset. This project provided a hands-on experience with the challenges of training a neural network. Additionally, it offered valuable experience in writing TensorFlow code for a complex neural network with branching and joining structures, a significant leap from our prior work with simpler sequential networks. For comparison, we also experimented with a sequential network to highlight the differences in complexity and performance.}
 
+\textcolor{red}{
 \section{Inspiration}
-Two code bases served as the inspiration for our Tensorflow implementation of Inception. The image pre-processing, particularly regularization techniques were guided by \cite{dishasai_multiclass_classification}. The Inception layer implementation was inspired by \cite{googlenet_inception_module}. Lastly, the graphs in Figures \ref{fig:googlenet-simple-accuracy} and \ref{fig:googlenet-complex-accuracy} were inspired by \cite{datacamp_cnn_tensorflow}.
+Two code bases served as the inspiration for our Tensorflow implementation of Inception. The image pre-processing, particularly regularization techniques were guided by \cite{dishasai_multiclass_classification}. The Inception layer implementation was inspired by \cite{googlenet_inception_module}. Lastly, the graphs in Figures \ref{fig:googlenet-simple-accuracy} and \ref{fig:googlenet-complex-accuracy} were inspired by \cite{datacamp_cnn_tensorflow}.}
 
 \section{Background}
 
@@ -96,7 +98,9 @@ After scaling, 100 images from each class were set aside to use for evaluating t
 
 Training and validation sets were created in-situ using Tensorflow's \text{image\_dataset\_from\_directory} function. The percentages were 80\% for training, and 20\% for validation.
 
-The networks mentioned in this report were training on an NVIDIA Quadro P2000 GPU having 5GB of dedicated memory.
+\textcolor{red}{
+\subsection{Compute Resources}
+The networks created for this project were trained and tested using GPU and CPU resources for comparison purposes. The GPU is an NVIDIA Quadro P2000 GPU having 5GB of dedicated memory. The CPU is an Intel Core i9-10850K 3.6GHz CPU with 20 logical cores. }
 
 \subsection{A Simplified GoogLeNet Network}
 \label{subsec:simple_model}
@@ -231,6 +235,10 @@ The Inception architecture has had a significant impact on the field of deep lea
 The architecture has also influenced subsequent innovations, including more advanced object detection systems like Faster R-CNN and SSD, which build on the principles introduced by Inception. Additionally, later versions of the Inception architecture continue to push the boundaries of accuracy and efficiency in deep learning.
 
 However, the architecture is not without its limitations. Despite its efficient design, training the network still requires significant compute power, especially for large datasets like ImageNet. Furthermore, the design of the Inception module, while effective, introduces additional complexity to the network architecture, making it  challenging to implement and optimize.
+
+\textcolor{red}{
+\subsection{Influence on Present Technology}
+Image recognition technology has become ubiquitous and is now readily accessible to the masses. For example, Google Photos can organize images based on their content \cite{google_photos_updates_2023}, and one can take a picture of a food label written in a foreign language and translate it using Google Translate \cite{google_translate_support_2024}. The success of neural networks can be largely attributed to the influence of Szegedy's work and its experiments. However, the original Szegedy experiments required substantial computing power, making them impractical for resource-constrained environments. Since 2015, there have been significant advancements in creating deep networks that can efficiently run on memory-limited devices, such as smartphones and automobiles. MobileNet, as described in \cite{howard2017mobilenets}, is a class of efficient models designed specifically for mobile applications. It builds upon key innovations from Inception, including multi-scale feature extraction, the use of 1x1 convolutions for dimensionality reduction, and the stacking of layers.}
 
 \bibliographystyle{plain}
 \bibliography{project/refs}
