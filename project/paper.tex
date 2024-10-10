@@ -5,6 +5,7 @@
 \usepackage{cite}
 \usepackage{listings}
 \usepackage{xcolor}
+\usepackage{ulem}
 
 \lstset{
     language=Python,             % Specify Python as the language
@@ -133,7 +134,7 @@ The validation accuracy and training accuracy track well, indicating a lack of o
 \end{figure}
 
 \subsection{Replicating the GoogLeNet Network}
-The GoogLeNet architecture is explained in Table 1 of the Szegedy paper is reproduced in Figure \ref{fig:googlenet-arch}. The introduction of Inception layers having parallel convolutional filters is the primary difference from typical sequential networks. The replication attempt, when trained for 30 epochs, achieved a maximum accuracy of 60.3\%. This is quite improved over the simple model. The other impressive aspect is that it only took 14 epochs to arrive at the maximum accuracy as shown in Figure \ref{fig:googlenet-complex-accuracy}. The conclusion is that the architecture does provide marked improvements over the simpler, more naive model described in \ref{subsec:simple_model}.
+The GoogLeNet architecture is explained in Table 1 of the Szegedy paper is reproduced in Figure \ref{fig:googlenet-arch}. \textcolor{red}{The network is 22 layers deep, incorporating branching and parallel convolutions via Inception modules.} The introduction of Inception layers having parallel convolutional filters is the primary difference from typical sequential networks. The replication attempt, when trained for 30 epochs, achieved a maximum accuracy of 60.3\%. This is quite improved over the simple model. The other impressive aspect is that it only took 14 epochs to arrive at the maximum accuracy as shown in Figure \ref{fig:googlenet-complex-accuracy}. The conclusion is that the architecture does provide marked improvements over the simpler, more naive model described in \ref{subsec:simple_model}.
 
 Nevertheless, this model is nowhere near the accuracy of the model in the Szegedy paper. Their model achieved a top-5 error rate of only 6.7\%. While the paper does not mention the accuracy, it is not a leap to assume that the accuracy was well above the accuracy in the replication attempt. We are optimistic, however, that our implementation is sound and that with a larger dataset, the accuracy can be improved and approach the accuracy achieved by Szegedy et. al. The network is graphically depicted in Figure \ref{fig:googlenet-complex}
 
@@ -215,19 +216,28 @@ The Inception architecture's key contribution is its ability to balance computat
 
 In our reproduction, the model's performance on the ImageNet dataset was not  close to the results reported in the original paper. This is not an indictment on the effectiveness of the architecture, however. Rather, the small dataset size could be a factor. Additionally, our interpretation of the Inception modules to code could have variations from the code used by Szegedy et al.
 
-One of the challenges we encountered was the high computational demand of training, event on the subset of ImageNet images we used. Although GoogLeNet is more efficient than many of its contemporaries, training still required GPU resources. We used data augmentation techniques, such as random cropping, random horizontal flipping, and random zoom to avoid overfitting\cite{dishasai_multiclass_classification}. We also needed to reduce the learning rate to 0.0001, reduced batch size to 16, and enabled memory growth\cite{tensorflow_memory_growth} so as not to overwhelm the GPU. Prefetching was also implemented to improve performance\cite{tensorflow_data_performance}. The training performance is summarized in Table \ref{tab:training_times}. From the training times, it should be readily apparent why a subset of the ImageNet images were chosen and that training the whole dataset would take an inordinate amount of time with the compute resources we had access to.
+\textcolor{red}{\subsubsection{Computational Demand}}
+\textcolor{red}{One of the challenges we encountered was the high computational demand of training, even on the subset of ImageNet images we used.  The training performance is summarized in Table \ref{tab:training_times}. It is interesting that the training times for the two models were nearly identical when using a \textit{single GPU} but differed by a factor of 1.7 when using \textit{20 logical CPU's.} This drove home one of the reasons GPU's have become so popular. From the training times, it should be readily apparent why a subset of the ImageNet images were chosen and that training the whole dataset would take an inordinate amount of time with the compute resources we had access to. To further reduce the time, the learning rate was reduced to 0.0001, and batch size was reduced to 16. Prefetching was also implemented to improve performance\cite{tensorflow_data_performance}.} \textcolor{red}{\sout{Although GoogLeNet is more efficient than many of its contemporaries, training still required GPU resources. We used data augmentation techniques, such as random cropping, random horizontal flipping, and random zoom to avoid overfitting\cite{dishasai_multiclass_classification}. We also needed to reduce the learning rate to 0.0001, reduced batch size to 16, and enabled memory growth\cite{tensorflow_memory_growth} so as not to overwhelm the GPU. Prefetching was also implemented to improve performance\cite{tensorflow_data_performance}. The training performance is summarized in Table \ref{tab:training_times}. From the training times, it should be readily apparent why a subset of the ImageNet images were chosen and that training the whole dataset would take an inordinate amount of time with the compute resources we had access to.}}
 
 \begin{table}[ht]
     \centering
     \begin{tabular}{llll}
     \hline
-    \textbf{Model} & \textbf{Batch size} & \textbf{Epochs} & \textbf{Training time (minutes)} \\  \hline
-    Simple & 16 & 30 & 58 \\ \hline
-    Complex & 16 & 30 & 64 \\ \hline
+    \textbf{Model} & \textbf{Batch size} & \textbf{Epochs} & \textbf{Training time (minutes) GPU/CPU} \\  \hline
+    Simple & 16 & 30 & 35/42 \\ \hline
+    GoogLeNet reproduction & 16 & 30 & 37/71 \\ \hline
     \end{tabular}
     \caption{Training times}
     \label{tab:training_times}
 \end{table}
+
+\textcolor{red}{\subsubsection{GPU Setup}}
+\textcolor{red}{The setup required to run Tensorflow code on a GPU on Windows is not trivial. Fortunately two good resources provided instructions on accomplishing this task \cite{abulhawa_tensorflow_gpu_wsl2_2023} \cite{towardsdatascience_jupyter_wsl2_2023}.}
+
+\textcolor{red}{\subsubsection{Overfitting}}
+\textcolor{red}{Overfitting was also an issue. We used data augmentation techniques, such as random cropping, random horizontal flipping, and random zoom to reduce overfitting\cite{dishasai_multiclass_classification}.}
+
+
 
 \subsection{Critical Assessment}
 The Inception architecture has had a significant impact on the field of deep learning, particularly in image classification. Its introduction marked a shift from simply increasing the size of models to incorporating more sophisticated designs that optimize the use of computational resources. This focus on efficiency has made the architecture suitable for deployment in resource-constrained environments, such as mobile devices.
