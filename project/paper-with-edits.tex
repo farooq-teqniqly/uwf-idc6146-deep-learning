@@ -58,7 +58,7 @@ The Inception architecture was introduced to address the primary challenge in co
 
 Another major innovation was the use of 1x1 convolutions for dimensionality reduction. By applying 1x1 filters before 3x3 and 5x5 convolutions, the Inception module significantly reduces the number of parameters and computational cost without sacrificing accuracy. This strategy enables the network to be deeper and wider without a substantial increase in computational complexity.
 
-The Inception architecture was implemented in a 22-layer deep network, GoogLeNet, which was used to win the ILSVRC 2014 competition. As Figure \ref{fig:googlenet-comp-perf} shows, GoogLeNet has the lowest top-5 error rate compared to previous winners~\cite{szegedy2015going}.
+The Inception architecture was implemented in a 22-layer deep network, GoogLeNet, which was used to win the ILSVRC 2014 competition. As Figure \ref{fig:googlenet-comp-perf} shows, GoogLeNet has the lowest top-5 error rate compared to previous winners~\cite{szegedy2015going}. 
 
 \begin{figure}[ht]
     \centering
@@ -93,7 +93,7 @@ The ImageNet dataset contains over 1 million images with a size of over 1TB. Pro
     \label{tab:synsets}
 \end{table}
 
-The resulting download consists of 14,738 files with a total size of 1.3GB. Scaling the images to 224 x 224 pixels, the dimensions used by Szegedy, et al. decreased the size to a manageable 137MB.
+The resulting download consists of 14,738 files with a total size of 1.3GB. Scaling the images to 224 x 224 pixels, the dimensions used by Szegedy, et al. decreased the size to a manageable 137MB. 
 
 After scaling, 100 images from each class were set aside to use for evaluating the trained model.
 
@@ -113,7 +113,7 @@ The architecture of this network was informed by the following constraints:
     \item About 14.7K images instead of the over 1 million images in the complete ImageNet dataset.
 \end{itemize}
 
-These constraints were the reason why the filter depths range from 32 to 256.
+These constraints were the reason why the filter depths range from 32 to 256. 
 
 
 \begin{figure}[ht]
@@ -123,7 +123,7 @@ These constraints were the reason why the filter depths range from 32 to 256.
     \label{fig:cnn-simple}
 \end{figure}
 
-This simple model, when trained for 30 epochs, achieved a maximum accuracy of 57.2\% at Epoch 23 as shown in Figure \ref{fig:googlenet-simple-accuracy}.
+This simple model, when trained for 30 epochs, achieved a maximum accuracy of 57.2\% at Epoch 23 as shown in Figure \ref{fig:googlenet-simple-accuracy}. 
 
 The validation accuracy and training accuracy track well, indicating a lack of overfitting. Applying data augmentation to the training set mitigates overfitting, especially with the smaller dataset.
 \begin{figure}[ht]
@@ -134,7 +134,7 @@ The validation accuracy and training accuracy track well, indicating a lack of o
 \end{figure}
 
 \subsection{Replicating the GoogLeNet Network}
-The GoogLeNet architecture is explained in Table 1 of the Szegedy paper is reproduced in Figure \ref{fig:googlenet-arch}. \textcolor{red}{The network is 22 layers deep, incorporating branching and parallel convolutions via Inception modules.} The introduction of Inception layers having parallel convolutional filters is the primary difference from typical sequential networks. The replication attempt, when trained for 30 epochs, achieved a maximum accuracy of 60.3\%. This is quite improved over the simple model. The other impressive aspect is that it only took 14 epochs to arrive at the maximum accuracy as shown in Figure \ref{fig:googlenet-complex-accuracy}. The conclusion is that the architecture does provide marked improvements over the simpler, more naive model described in \ref{subsec:simple_model}.
+The GoogLeNet architecture is explained in Table 1 of the Szegedy paper is reproduced in Figure \ref{fig:googlenet-arch}. \textcolor{red}{The network is 22 layers deep, incorporating branching and parallel convolutions via Inception modules.} The introduction of Inception layers having parallel convolutional filters is the primary difference from typical sequential networks. The replication attempt, when trained for 30 epochs, achieved a maximum accuracy of 60.3\%. This is quite improved over the simple model. The other impressive aspect is that it only took 14 epochs to arrive at the maximum accuracy as shown in Figure \ref{fig:googlenet-complex-accuracy}. The conclusion is that the architecture does provide marked improvements over the simpler, more naive model described in \ref{subsec:simple_model}. 
 
 Nevertheless, this model is nowhere near the accuracy of the model in the Szegedy paper. Their model achieved a top-5 error rate of only 6.7\%. While the paper does not mention the accuracy, it is not a leap to assume that the accuracy was well above the accuracy in the replication attempt. We are optimistic, however, that our implementation is sound and that with a larger dataset, the accuracy can be improved and approach the accuracy achieved by Szegedy et. al. The network is graphically depicted in Figure \ref{fig:googlenet-complex}
 
@@ -160,7 +160,7 @@ Nevertheless, this model is nowhere near the accuracy of the model in the Szeged
 \end{figure}
 
 \subsection{Model Evaluation}
-Both networks were evaluated using two sets of images. The first is the 1,000 ImageNet images set aside prior to model training. The second set is sourced from the CIFAR-10 dataset\cite{kim_cifar10_images}. The CIFAR-10 dataset contains 1,000 32x32 RGB images.
+Both networks were evaluated using two sets of images. The first is the 1,000 ImageNet images set aside prior to model training. The second set is sourced from the CIFAR-10 dataset\cite{kim_cifar10_images}. The CIFAR-10 dataset contains 1,000 32x32 RGB images. 
 
 \subsubsection{Performance On Unseen ImageNet Images}
 100 images from each class was set aside in order to evaluate the performance of the two models on unseen images. The accuracy of the two models is shown in \ref{tab:perf-unseen-imagenet}.
@@ -183,7 +183,7 @@ Furthermore, the relatively small difference in training accuracy and evaluation
 
 On the other hand, the 58.1\% accuracy also indicates that there is room for improvement, suggesting that the model might benefit from more complexity or further tuning.
 
-The GoogLeNet reproduction resulted in a 66.2\% accuracy on unseen ImageNet images. The higher accuracy of this model can be attributed to the same reasons as the simpler model. In this case, additional complexity did provide a marked increase in accuracy. There is cause for optimism that a result closer to what was achieved by Szegedy, et al. could be matched with a larger training set.
+The GoogLeNet reproduction resulted in a 66.2\% accuracy on unseen ImageNet images. The higher accuracy of this model can be attributed to the same reasons as the simpler model. In this case, additional complexity did provide a marked increase in accuracy. There is cause for optimism that a result closer to what was achieved by Szegedy, et al. could be matched with a larger training set. 
 
 
 
